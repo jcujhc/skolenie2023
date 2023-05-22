@@ -11,4 +11,4 @@ sqlplus -v
 export ORACLE_HOME=/home/einstein-*/oracle/19.3
 
 export PATH=$PATH:$ORACLE_HOME/bin
-sqlplus appadm/start123@//10.233.133.153:1521/tSKDB
+sqlplus student01/start123@//10.233.133.153:51521/tSKDB
