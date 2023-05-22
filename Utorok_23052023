@@ -33,3 +33,14 @@ INSERT INTO zamestnanci (emp_number, last_name, first_name, salary, dept_id) VAL
 INSERT INTO zamestnanci (emp_number, last_name, first_name, salary, dept_id) VALUES (401932,'Bacova','Daniela',1370,280905); 
 INSERT INTO zamestnanci (emp_number, last_name, first_name, salary, dept_id) VALUES (401484,'Kollarova','Veronika',1250,309217); 
 
+
+
+
+
+
+
+
+
+
+
+
