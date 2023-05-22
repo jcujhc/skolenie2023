@@ -1,3 +1,75 @@
+[einsteinteacher@centos8 ~]$ sudo su -
+Last login: Mon May 22 08:16:43 CEST 2023 on pts/1
+[root@centos8 ~]# su - oracle
+Last login: Mon May 22 08:20:05 CEST 2023 on pts/1
+[oracle@centos8 ~]$ id
+uid=10001(oracle) gid=1001(dba) groups=1001(dba),1002(oinstall) context=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023
+[oracle@centos8 ~]$ ps -ef|grep -i ora
+oracle     68015       1  0 May21 ?        00:00:00 /u01/app/oracle/product/19c/bin/tnslsnr LISTENER_tSKDB -inherit
+root      101395  101359  0 09:16 pts/2    00:00:00 su - oracle
+oracle    101396  101395  0 09:16 pts/2    00:00:00 -bash
+oracle    101443  101396  0 09:16 pts/2    00:00:00 ps -ef
+oracle    101444  101396  0 09:16 pts/2    00:00:00 grep --color=auto -i ora
+[oracle@centos8 ~]$ kill -9 68015
+[oracle@centos8 ~]$ ps -ef|grep -i ora_
+oracle    101465  101396  0 09:17 pts/2    00:00:00 grep --color=auto -i ora_
+[oracle@centos8 ~]$ sqlplus
+bash: sqlplus: command not found...
+[oracle@centos8 ~]$ export ORACLE_HOME=/u01/app/oracle/product/19c
+[oracle@centos8 ~]$ export ORACLE_SID=tSKDB
+[oracle@centos8 ~]$ sqlplus
+bash: sqlplus: command not found...
+
+[oracle@centos8 bin]$ export PATH=$PATH:/u01/app/oracle/product/19c/bin
+[oracle@centos8 bin]$ sqlplus
+
+SQL*Plus: Release 19.0.0.0.0 - Production on Mon May 22 09:23:37 2023
+Version 19.3.0.0.0
+
+Copyright (c) 1982, 2019, Oracle.  All rights reserved.
+
+Enter user-name:
+
+### START  Instance / DB
+[oracle@centos8 ~]$ sqlplus '/as sysdba'
+
+SQL*Plus: Release 19.0.0.0.0 - Production on Mon May 22 09:25:58 2023
+Version 19.3.0.0.0
+
+Copyright (c) 1982, 2019, Oracle.  All rights reserved.
+
+Connected to an idle instance.
+
+SQL> startup
+ORACLE instance started.
+
+Total System Global Area 2365586088 bytes
+Fixed Size                  8899240 bytes
+Variable Size             536870912 bytes
+Database Buffers         1811939328 bytes
+Redo Buffers                7876608 bytes
+Database mounted.
+Database opened.
+
+### SHUTDOWN  Instance / DB
+SQL> shu immediate
+Database closed.
+Database dismounted.
+ORACLE instance shut down.
+
+
+### pfile / init.ora
+SQL> show parameter pfile
+
+NAME                                 TYPE        VALUE
+------------------------------------ ----------- ------------------------------
+spfile                               string      /u01/app/oracle/product/19c/db
+                                                 s/spfiletSKDB.ora
+
+
+
+
+
 mkdir /home/einstein-*/oracle
 mkdir /home/einstein-*/sw
 
