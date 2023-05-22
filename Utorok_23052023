@@ -4,7 +4,6 @@ CREATE TABLE oddelenia
   dept_headof varchar2(50) NOT NULL,
 );
 
-
 CREATE TABLE zamestnanci
 ( emp_number number NOT NULL,
   last_name varchar2(50) NOT NULL,
@@ -12,7 +11,6 @@ CREATE TABLE zamestnanci
   salary number,
   dept_id number,
 );
-
 
 INSERT INTO oddelenia (dept_id, dept_name, dept_headof) VALUES (114567,'GSO SAP 5','Verner, Igor');
 INSERT INTO oddelenia (dept_id, dept_name, dept_headof) VALUES (221267,'TSO AM 4','Lycka-Kubalakova, Edita');
@@ -22,9 +20,6 @@ INSERT INTO oddelenia (dept_id, dept_name, dept_headof) VALUES (280905,'Citrix1'
 INSERT INTO oddelenia (dept_id, dept_name, dept_headof) VALUES (328245,'CU Shell','Fric Jozef');
 INSERT INTO oddelenia (dept_id, dept_name, dept_headof) VALUES (222824,'PC and Platform Services','Holan Peter');
 INSERT INTO oddelenia (dept_id, dept_name, dept_headof) VALUES (311579,'DCO Systems Operations','Liba Dusan');
-
-commit;
-
 
 INSERT INTO zamestnanci (emp_number, last_name, first_name, salary, dept_id) VALUES (460061, 'Molnar','Ivan', 700, 114567);
 INSERT INTO zamestnanci (emp_number, last_name, first_name, salary, dept_id) VALUES (329099, 'Molnar','Jozef', 820, 327659);
@@ -36,7 +31,4 @@ INSERT INTO zamestnanci (emp_number, last_name, first_name, salary, dept_id) VAL
 INSERT INTO zamestnanci (emp_number, last_name, first_name, salary, dept_id) VALUES (234501, 'Reckert','Falk',1900,311579); 
 INSERT INTO zamestnanci (emp_number, last_name, first_name, salary, dept_id) VALUES (401932,'Bacova','Daniela',1370,280905); 
 INSERT INTO zamestnanci (emp_number, last_name, first_name, salary, dept_id) VALUES (401484,'Kollarova','Veronika',1250,309217); 
- 
 
-
-commit;
