@@ -1,3 +1,194 @@
+ADMINISTRACIA:
+----------------------------------------
+## https://www.pcwdld.com/sql-cheat-sheet#wbounce-modal
+
+create user APPADM identified by "start123";
+grant connect to APPADM;
+grant create table to APPADM;
+desc dba_users
+select username, profile from dba_users;
+
+ROLES:
+---------------------------------------------------
+create table test(id number);
+insert into test values(1);
+insert into test values(1);
+insert into test values(1);
+
+create user app2 identified by "start123";
+create role demo;
+grant connect to demo;
+grant select,insert,update,delete on lektor01.welcome to demo;
+create role demo2;
+grant select,insert,update,delete on sys.test to demo2;
+grant demo to demo2;
+grant demo2 to app2;
+
+
+
+TABLESPACES
+----------------------------------------------------
+set pagesize 2000;
+define used_percent
+column tablespace_name format a30;
+select tablespace_name,
+       round(sum(tbs_bytes_total)/1024/1024,3)  tot_MB,
+       round((sum(tbs_bytes_total)- SUM(tbs_bytes_free ))/1024/1024,2) used_MB,
+       round((SUM(tbs_bytes_free))/1024/1024,2) free_MB,
+       round((sum(tbs_bytes_total) - SUM(tbs_bytes_free )) *100 / (sum(tbs_bytes_total))  ,2)  used_percent,
+       100 - round((sum(tbs_bytes_total) - SUM(tbs_bytes_free )) *100 / (sum(tbs_bytes_total))  ,2) free_percent
+       -- round(SUM(tbs_bytes_free/NULLIF(tbs_bytes_total,0))/1024/1024,2)*100 free_percent
+from
+ (SELECT tablespace_name, 0 tbs_bytes_total, SUM(bytes) tbs_bytes_free
+  FROM   dba_free_space
+  GROUP BY tablespace_name
+ UNION
+  SELECT tablespace_name   ,SUM(bytes)  tbs_bytes_total, 0 tbs_bytes_free
+  FROM   v$datafile_header
+  group by tablespace_name )
+group by tablespace_name
+order by used_percent asc;
+
+
+alter user APPADM quota 2M on USERS;
+
+select * from dba_profiles;
+
+select * from v$parameter where parameter like ‘%FILE%’;
+
+select * from session_privs;
+
+## resize tablespace
+alter database datafile ‘’ resize 200M;
+alter tablespace add datafile ‘’ size 200M;
+
+
+## check user grants 
+---------------------------------------------------
+set pages 0 feed off veri off lines 500
+
+accept oldname prompt "Enter user to model new user to: "
+accept newname prompt "Enter new user name: "
+
+
+-- Grant Roles...
+select 'grant '||granted_role||' to &&newname'||
+       decode(ADMIN_OPTION, 'YES', ' WITH ADMIN OPTION')||';'
+from   user_role_privs;
+
+-- Grant System Privs...
+select 'grant '||privilege||' to &&newname'||
+       decode(ADMIN_OPTION, 'YES', ' WITH ADMIN OPTION')||';'
+from   user_sys_privs;
+
+-- Grant Table Privs...
+select 'grant '||privilege||' on '||owner||'.'||table_name||' to &&newname;'
+from   sys.user_tab_privs
+where  grantee = upper('&&oldname');
+
+-- Grant Column Privs...
+select 'grant '||privilege||' on '||owner||'.'||table_name||
+       '('||column_name||') to &&newname;'
+from   sys.user_col_privs
+where  grantee = upper('&&oldname');
+
+-- Tablespace Quotas...
+select 'alter user '||username||' quota '||
+decode(max_bytes, -1, 'UNLIMITED', max_bytes)||
+' on '||tablespace_name||';'
+from sys.user_ts_quotas
+where username = upper('&oldname');
+
+-- Set Default Role...
+set serveroutput on
+declare
+  defroles varchar2(4000);
+begin
+  for c1 in (select * from sys.user_role_privs
+              where grantee = upper('&&oldname')
+                and default_role = 'YES'
+  ) loop
+      if length(defroles) > 0 then
+         defroles := defroles||','||c1.granted_role;
+      else
+         defroles := defroles||c1.granted_role;
+      end if;
+  end loop;
+  dbms_output.put_line('alter user &&newname default role '||defroles||';');
+end;
+/
+
+## clone_user - clone_user.sql
+----------------------------------------------------
+set pages 0 feed off veri off lines 500
+
+accept oldname prompt "Enter user to model new user to: "
+accept newname prompt "Enter new user name: "
+-- accept psw     prompt "Enter new user's password: "
+
+-- Create user...
+select 'create user &&newname identified by values '''||password||''''||
+-- select 'create user &&newname identified by &psw'||
+       ' default tablespace '||default_tablespace||
+       ' temporary tablespace '||temporary_tablespace||' profile '||
+       profile||';'
+from   sys.dba_users
+where  username = upper('&&oldname');
+
+-- Grant Roles...
+select 'grant '||granted_role||' to &&newname'||
+       decode(ADMIN_OPTION, 'YES', ' WITH ADMIN OPTION')||';'
+from   sys.dba_role_privs
+where  grantee = upper('&&oldname');
+
+-- Grant System Privs...
+select 'grant '||privilege||' to &&newname'||
+       decode(ADMIN_OPTION, 'YES', ' WITH ADMIN OPTION')||';'
+from   sys.dba_sys_privs
+where  grantee = upper('&&oldname');
+
+-- Grant Table Privs...
+select 'grant '||privilege||' on '||owner||'.'||table_name||' to &&newname;'
+from   sys.dba_tab_privs
+where  grantee = upper('&&oldname');
+
+-- Grant Column Privs...
+select 'grant '||privilege||' on '||owner||'.'||table_name||
+       '('||column_name||') to &&newname;'
+from   sys.dba_col_privs
+where  grantee = upper('&&oldname');
+
+-- Tablespace Quotas...
+select 'alter user '||username||' quota '||
+decode(max_bytes, -1, 'UNLIMITED', max_bytes)||
+' on '||tablespace_name||';'
+from sys.dba_ts_quotas
+where username = upper('&oldname');
+
+-- Set Default Role...
+set serveroutput on
+declare
+  defroles varchar2(4000);
+begin
+  for c1 in (select * from sys.dba_role_privs
+              where grantee = upper('&&oldname')
+                and default_role = 'YES'
+  ) loop
+      if length(defroles) > 0 then
+         defroles := defroles||','||c1.granted_role;
+      else
+         defroles := defroles||c1.granted_role;
+      end if;
+  end loop;
+  dbms_output.put_line('alter user &&newname default role '||defroles||';');
+end;
+/
+
+
+
+
+
+
 CREATE TABLE oddelenia
 ( dept_id number NOT NULL,
   dept_name varchar2(50) NOT NULL,
