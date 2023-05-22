@@ -66,10 +66,38 @@ NAME                                 TYPE        VALUE
 spfile                               string      /u01/app/oracle/product/19c/db
                                                  s/spfiletSKDB.ora
 
+cd /u01/app/oracle/product/19c/db
+[oracle@centos8 dbs]$ strings spfiletSKDB.ora
+
+SQL> create pfile from spfile;
+
+SQL> show parameter sga
+
+NAME                                 TYPE        VALUE
+------------------------------------ ----------- ------------------------------
+allow_group_access_to_sga            boolean     FALSE
+lock_sga                             boolean     FALSE
+pre_page_sga                         boolean     TRUE
+sga_max_size                         big integer 2256M
+sga_min_size                         big integer 0
+sga_target                           big integer 2256M
+unified_audit_sga_queue_size         integer     1048576
+
+
+SQL> show parameter pga
+
+NAME                                 TYPE        VALUE
+------------------------------------ ----------- ------------------------------
+pga_aggregate_limit                  big integer 2G
+pga_aggregate_target                 big integer 750M
+
+SQL> alter system set sga_target=40G scope=spfile;
 
 
 
 
+
+## INSTALACIA KLIENTA 19.3
 mkdir /home/einstein-*/oracle
 mkdir /home/einstein-*/sw
 
@@ -80,7 +108,7 @@ oracle@centos8$ ./runInstaller
 
 sqlplus -v
 
+vi .bashrc
 export ORACLE_HOME=/home/einstein-*/oracle/19.3
-
 export PATH=$PATH:$ORACLE_HOME/bin
-sqlplus student01/start123@//10.233.133.153:51521/tSKDB
+alias s+='sqlplus student15/start123@//10.233.133.153:51521/tSKDB'
