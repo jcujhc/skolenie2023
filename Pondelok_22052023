@@ -1,1 +1,8 @@
+mkdir /home/einstein-*/oracle
+mkdir /home/einstein-*/sw
+
+export CV_ASSUME_DISTID=OEL7.8
+
+unzip /home/einstein-*/sw/LINUX*
+oracle@centos8$ ./runInstaller
 
