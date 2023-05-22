@@ -12,6 +12,7 @@ CREATE TABLE zamestnanci
   dept_id number,
 );
 
+
 INSERT INTO oddelenia (dept_id, dept_name, dept_headof) VALUES (114567,'GSO SAP 5','Verner, Igor');
 INSERT INTO oddelenia (dept_id, dept_name, dept_headof) VALUES (221267,'TSO AM 4','Lycka-Kubalakova, Edita');
 INSERT INTO oddelenia (dept_id, dept_name, dept_headof) VALUES (327659,'LIM','Kasper, Kornelis');
