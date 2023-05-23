@@ -112,3 +112,19 @@ vi .bashrc
 export ORACLE_HOME=/home/einstein-*/oracle/19.3
 export PATH=$PATH:$ORACLE_HOME/bin
 alias s+='sqlplus student15/start123@//10.233.133.153:51521/tSKDB'
+
+## TNSNAMES.ORA
+--------------------------------------------------------------------------------------------------
+[einstein-15@centos8 admin]$ echo $ORACLE_HOME
+/home/einstein-15/oracle/19.3
+[einstein-15@centos8 19.3]$ cd network/admin/
+
+[einstein-15@centos8 admin]$ cat tnsnames.ora
+DB_SKOLENIE =
+(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=10.233.133.155)(PORT=1521))(CONNECT_DATA=(SID=SKOLENIE)))
+
+DB_tSKDB =
+(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=10.233.133.153)(PORT=51521))(CONNECT_DATA=(SID=tSKDB)))
+
+
+
