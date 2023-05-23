@@ -4,6 +4,25 @@ SELECT SYS_CONTEXT ('USERENV', 'SESSION_USER') FROM DUAL;
 SELECT SYS_CONTEXT ('USERENV', 'DB_NAME') FROM DUAL;
 SELECT SYS_CONTEXT ('USERENV', 'CURRENT_USER') FROM DUAL;
 
+select sid,USERNAME,MACHINE,STATUS,LOGON_TIME,PROGRAM from v$session;
+
+SQL@tSKDB> desc v$session
+
+col USERNAME for a20
+col MACHINE for a10
+set lines 160
+select sid,USERNAME,MACHINE,STATUS,LOGON_TIME,PROGRAM from v$session;
+
+col USERNAME for a20
+col MACHINE for a10
+set lines 160
+select sid,USERNAME,MACHINE,STATUS,LOGON_TIME,PROGRAM from v$session;
+
+col USERNAME for a20
+col MACHINE for a10
+set lines 160
+select sid,USERNAME,MACHINE,STATUS,LOGON_TIME,PROGRAM from v$session where USERNAME is not null;
+## https://oracle-base.com/articles/12c/ofs-and-dbfs-enhancements-12cr2
 
 
 grant select on v$session to student01;
