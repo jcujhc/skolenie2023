@@ -23,8 +23,8 @@ select sid,USERNAME,MACHINE,STATUS,LOGON_TIME,PROGRAM from v$session where USERN
 
 grant select on v_$session to student01;
 grant select on v_$session to student02;
-grant select on v$session to student03;
-grant select on v$session to student04;
+grant select on v_$session to student03;
+grant select on v_$session to student04;
 grant select on v_$session to student05;
 grant select on v_$session to student06;
 grant select on v_$session to student07;
