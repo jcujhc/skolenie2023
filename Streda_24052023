@@ -1,2 +1,99 @@
+
+                  EXPDB / IMPDP
+--------------------------------------------------------
+EXPDP - slúži na export dát pomocou datapump utility
+IMPDP - slúži na import dát pomocou datapump utility
+
+Prereq
+User musí byť unlocked a mať grant create session
+	alter user app_user account unlock;
+Musí byť špecifikovaná cesta pre dump files
+	create or replace directory app_exp_dir as ‘/app/exp/dir/’;
+User musí mať nagrantované práva na čítanie a zápis do directory
+	grant read,write on directory app_exp_dir to app_user;
+V neposlednom rade dostatok miesta na filesysteme.
+Pomocné pohľady;
+	dba_datapump_dir
+	dba_datapump_jobs/user_datapump_jobs
+
+Pre export objectov z cudzej schémy je potrebné mať nagrantovanú rolu EXP_FULL_DATABASE a pre import IMP_FULL_DATABASE
+
+Datapump export mode for non-DBA:
+	full export
+	schema export
+	table export
+	tablespace export
+	transportable tablespace export
+Pri exporte môžeme robiť exclude, include na db objekty, vieme exportnúť iba metadata,data alebo všetko
+
+
+
+SETUP
+Vytvorenie fyzickej cesty k dump súborom:
+mkdir /u01/data/export
+create or replace directory DPDIR as '/u01/data/export';
+grant read, write on directory DPDIR to student1;
+
+EXPDP
+$ expdp student01/start123@DB_tSKDB schemas=student01 directory=DPDIR
+$ ls -ltr /apps/admin/export
+-rw-r-----    1 oracle   dba          290816 Jul 18 14:03 export.dmp
+-rw-r--r--    1 oracle   dba            1530 Jul 18 14:03 export.log
+
+PRÍKLADY:
+$ expdp student1/start123@DB_tSKDB dumpfile=expdp_db.30072019.dmp LOGFILE=expdp_db.log directory=DPDIR schemas=student05
+
+$ expdp student1/start123@DB_tSKDB dumpfile=expdp_db.30072019.dmp LOGFILE=expdp_db.log directory=DPDIR tables=mojatabulka
+
+Možné ORA chyby v logoch pri exporte
+ORA-01555: snapshot too old: rollback segment number 20 with name "_SYSSMU20_4037596720$" too small
+ORA-01031: insufficient privileges
+ORA-01466: unable to read data - table definition has changed
+
+
+IMPDP
+$ impdp student1/start123@DB_tSKDB schemas=student1 directory=DPDIR dumpfile= export.dmp
+$ impdp student1/start123@DB_tSKDB dumpfile=expdp_db.30072019.dmp LOGFILE=impdp_db.log directory=DPDIR tables=mojatabulka
+
+
+EXPDP/IMPDP použitím par file
+--------------------------------------------
+file: mojexport.par
+USERID=student01/start123
+DIRECTORY=DPDIR
+DUMPFILE=expdp_db.30072019.dmp
+LOGFILE=expdp_db.30072019.log
+SCHEMAS=student1
+# or TABLES=EMPLOYEES, DEPARTMENTS
+
+$ expdp parfile=mojexport.par
+
+
+table_exists_action je použitá pri impdp keď tabuľka už existuje v DB 
+                 
+table_exists_action=skip:  ignoruj data v import file a nechaj existujúcu tabuľku nedotknutú. Toto je default option a neplatí pri nastavení  content=data_only.
+
+table_exists_action=append:  týmto sa povie, pridaj exportované dá do existujúcej tabuľky, nechaj exist. riadny a pridaj nové.
+
+table_exists_action=truncate:  toto nám vraví, truncate existujúcu tabuľku, ponechaj štruktúru a importni riadky z dump file. Pri použití tejto option nesmie existovat  referenčné integrita (constraints) na cieľovej tabuľke.  
+ 
+table_exists_action=replace:  toto nám vraví, zmaž celú tabuľku a nahraď definíciu a riadky tabuľky 
+
+DALSIE MOZNOSTI IMPDP
+TABLE_EXISTS_ACTION = {SKIP | APPEND | TRUNCATE | REPLACE}
+INCLUDE=
+EXCLUDE=TABLES:
+REMAP_SCHEMA=HR:HR2
+REMAP_TABLESPACE=EXAMPLE:HR2_DATA
+
+
+
+
 AWS: EXPDP
 https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/oracle-s3-integration.html
+
+Requirements for Importing data with Oracle Data Pump and an Amazon S3 bucket
+# https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/Oracle.Procedural.Importing.html
+# https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/Oracle.Procedural.Importing.DataPump.html
+
+
