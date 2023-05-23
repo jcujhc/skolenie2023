@@ -6,6 +6,20 @@ SELECT SYS_CONTEXT ('USERENV', 'CURRENT_USER') FROM DUAL;
 
 
 
+grant select on v$session to student01;
+grant select on v$session student02;
+grant select on v$session student03;
+grant select on v$session student04;
+grant select on v$session student05;
+grant select on v$session student06;
+grant select on v$session student07;
+grant select on v$session student08;
+grant select on v$session student09;
+grant select on v$session student10;
+grant select on v$session student11;
+grant select on v$session student12;
+
+
 ADMINISTRACIA:
 ----------------------------------------
 ## https://www.pcwdld.com/sql-cheat-sheet#wbounce-modal
@@ -32,6 +46,21 @@ grant select,insert,update,delete on sys.test to demo2;
 grant demo to demo2;
 grant demo2 to app2;
 
+
+
+
+grant dba to student01;
+grant dba to student02;
+grant dba to student03;
+grant dba to student04;
+grant dba to student05;
+grant dba to student06;
+grant dba to student07;
+grant dba to student08;
+grant dba to student09;
+grant dba to student10;
+grant dba to student11;
+grant dba to student12;
 
 
 TABLESPACES
