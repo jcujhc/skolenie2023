@@ -21,18 +21,18 @@ select sid,USERNAME,MACHINE,STATUS,LOGON_TIME,PROGRAM from v$session where USERN
 ## https://oracle-base.com/articles/12c/ofs-and-dbfs-enhancements-12cr2
 
 
-grant select on v$session to student01;
-grant select on v$session to student02;
+grant select on v_$session to student01;
+grant select on v_$session to student02;
 grant select on v$session to student03;
 grant select on v$session to student04;
-grant select on v$session to student05;
-grant select on v$session to student06;
-grant select on v$session to student07;
-grant select on v$session to student08;
-grant select on v$session to student09;
-grant select on v$session to student10;
-grant select on v$session to student11;
-grant select on v$session to student12;
+grant select on v_$session to student05;
+grant select on v_$session to student06;
+grant select on v_$session to student07;
+grant select on v_$session to student08;
+grant select on v_$session to student09;
+grant select on v_$session to student10;
+grant select on v_$session to student11;
+grant select on v_$session to student12;
 
 
 ADMINISTRACIA:
