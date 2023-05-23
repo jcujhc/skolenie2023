@@ -1,3 +1,11 @@
+
+s+
+SELECT SYS_CONTEXT ('USERENV', 'SESSION_USER') FROM DUAL;
+SELECT SYS_CONTEXT ('USERENV', 'DB_NAME') FROM DUAL;
+SELECT SYS_CONTEXT ('USERENV', 'CURRENT_USER') FROM DUAL;
+
+
+
 ADMINISTRACIA:
 ----------------------------------------
 ## https://www.pcwdld.com/sql-cheat-sheet#wbounce-modal
