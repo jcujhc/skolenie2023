@@ -13,10 +13,6 @@ col MACHINE for a10
 set lines 160
 select sid,USERNAME,MACHINE,STATUS,LOGON_TIME,PROGRAM from v$session;
 
-col USERNAME for a20
-col MACHINE for a10
-set lines 160
-select sid,USERNAME,MACHINE,STATUS,LOGON_TIME,PROGRAM from v$session;
 
 col USERNAME for a20
 col MACHINE for a10
