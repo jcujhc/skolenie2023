@@ -325,12 +325,22 @@ SQL> create temporary tablespace SYS_TMP_1 tempfile '/u01/data/TMYDB/SYS_TMP_1_1
 SQL> select tablespace_name from dba_tablespaces;
 
 
-
-
 drop user STUDENT15;
 create role DEMO;
 create role DEMO2;
 impdp \'/ as sysdba\' dumpfile=expdp_SCH_STUDENT15_24052023.dmp directory=DPDIR schemas=STUDENT15 log=expdp.log
+
+
+
+expdp \"/ as sysdba\" dumpfile=expdp_STUDENT15.dmp directory=DPDIR schemas=STUDENT15 log=expdp.log
+
+impdp \"/ as sysdba\" dumpfile=expdp_SCH_STUDENT15_24052023.dmp directory=DPDIR schemas=STUDENT15 log=expdp.log REMAP_SCHEMA=STUDENT15:APPLIKACNA_SCH
+
+
+create tablespace NEW_TBS datafile '/u01/data/TMYDB/new_tbs_01.dbf' size 5G;
+
+impdp \"/ as sysdba\" dumpfile=expdp_SCH_STUDENT15_24052023.dmp directory=DPDIR schemas=STUDENT15 log=expdp.log REMAP_SCHEMA=STUDENT15:IKDB REMAP_TABLESPACE=USERS:NEW_TBS
+
 
 
 AWS: EXPDP
