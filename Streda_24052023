@@ -321,7 +321,10 @@ SQL> create or replace directory DPDIR as '/u01/data/DUMP';
 scp oracle@10.233.133.153:/u01/data/export/expdp_SCH_STUDENT15_24052023.dmp /u01/data/DUMP/
 impdp \'/ as sysdba\' dumpfile=expdp_SCH_STUDENT15_24052023.dmp directory=DPDIR schemas=STUDENT15 log=expdp.log
 
- create temporary tablespace SYS_TMP_1 tempfile '/u01/data/TMYDB/SYS_TMP_1_1.dbf' size 2G;
+SQL> create temporary tablespace SYS_TMP_1 tempfile '/u01/data/TMYDB/SYS_TMP_1_1.dbf' size 2G;
+SQL> select tablespace_name from dba_tablespaces;
+
+
 
 
 drop user STUDENT15;
