@@ -318,7 +318,7 @@ AS ORACLE USER: tmyDB
 mkdir /u01/data/DUMP
 SQL> create or replace directory DPDIR as '/u01/data/DUMP';
 
-scp oracle/start123:/u01/data/export/expdp_SCH_STUDENT15_24052023.dmp /u01/data/DUMP/
+scp oracle@10.233.133.153:/u01/data/export/expdp_SCH_STUDENT15_24052023.dmp /u01/data/DUMP/
 impdp \'/ as sysdba\' dumpfile=expdp_SCH_STUDENT15_24052023.dmp directory=DPDIR schemas=STUDENT15 log=expdp.log
 
 
