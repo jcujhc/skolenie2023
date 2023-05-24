@@ -314,7 +314,7 @@ expdp \'/ as sysdba\' dumpfile=expdp_SCH_STUDENT15_24052023.dmp directory=DPDIR 
 # chmod 777 /u01/data/export
 
 ULOHA: einstein-15
-AS ORACLE USER:
+AS ORACLE USER: tmyDB
 mkdir /u01/data/DUMP
 SQL> create or replace directory DPDIR as '/u01/data/DUMP';
 
@@ -322,8 +322,10 @@ scp oracle/start123:/u01/data/export/expdp_SCH_STUDENT15_24052023.dmp /u01/data/
 impdp \'/ as sysdba\' dumpfile=expdp_SCH_STUDENT15_24052023.dmp directory=DPDIR schemas=STUDENT15 log=expdp.log
 
 
-
-
+drop user STUDENT15;
+create role DEMO;
+create role DEMO2;
+impdp \'/ as sysdba\' dumpfile=expdp_SCH_STUDENT15_24052023.dmp directory=DPDIR schemas=STUDENT15 log=expdp.log
 
 
 AWS: EXPDP
