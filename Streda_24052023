@@ -299,6 +299,30 @@ EXCLUDE=TABLES:
 REMAP_SCHEMA=HR:HR2
 REMAP_TABLESPACE=EXAMPLE:HR2_DATA
 
+DEMO:
+-------------------------------------
+mkdir /u01/data/export
+SQL> create or replace directory DPDIR as '/u01/data/export';
+
+revoke dba from student15;
+grant read, write on directory DPDIR to student15;
+expdp student15/start123@DB_tSKDB dumpfile=expdp_SCH_STUDENT15_24052023.dmp LOGFILE=expdp_db.log directory=DPDIR schemas=student15
+
+AS SYSDBA
+expdp \'/ as sysdba\' dumpfile=expdp_SCH_STUDENT15_24052023.dmp directory=DPDIR schemas=STUDENT15 log=expdp.log
+
+# chmod 777 /u01/data/export
+
+ULOHA: einstein-15
+AS ORACLE USER:
+mkdir /u01/data/DUMP
+SQL> create or replace directory DPDIR as '/u01/data/DUMP';
+
+scp oracle/start123:/u01/data/export/expdp_SCH_STUDENT15_24052023.dmp /u01/data/DUMP/
+impdp \'/ as sysdba\' dumpfile=expdp_SCH_STUDENT15_24052023.dmp directory=DPDIR schemas=STUDENT15 log=expdp.log
+
+
+
 
 
 
