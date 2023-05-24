@@ -330,8 +330,8 @@ create role DEMO;
 create role DEMO2;
 impdp \'/ as sysdba\' dumpfile=expdp_SCH_STUDENT15_24052023.dmp directory=DPDIR schemas=STUDENT15 log=expdp.log
 
-
-
+GRANT CREATE MATERIALIZED VIEW TO STUDENT15;
+select * from dba_directories where DIRECTORY_NAME='DPDIR';
 expdp \"/ as sysdba\" dumpfile=expdp_STUDENT15.dmp directory=DPDIR schemas=STUDENT15 log=expdp.log
 
 impdp \"/ as sysdba\" dumpfile=expdp_SCH_STUDENT15_24052023.dmp directory=DPDIR schemas=STUDENT15 log=expdp.log REMAP_SCHEMA=STUDENT15:APPLIKACNA_SCH
