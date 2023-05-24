@@ -221,7 +221,7 @@ Prereq
 User musí byť unlocked a mať grant create session
 	alter user app_user account unlock;
 Musí byť špecifikovaná cesta pre dump files
-	create or replace directory app_exp_dir as ‘/app/exp/dir/’;
+	create or replace directory app_exp_dir as '/app/exp/dir/';
 User musí mať nagrantované práva na čítanie a zápis do directory
 	grant read,write on directory app_exp_dir to app_user;
 V neposlednom rade dostatok miesta na filesysteme.
