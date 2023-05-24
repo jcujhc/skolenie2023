@@ -1,3 +1,75 @@
+as ROOT user
+groupadd oinstall
+groupadd dba
+useradd -g oinstall -G dba oracle
+passwd oracle
+
+AS ORACLE user
+mkdir -p /u01/data/
+mkdir -p /u01/app/oracle/product/19c
+ls -la /tmp/LINUX.X64_193000_db_home.zip
+cp /tmp/LINUX.X64_193000_db_home.zip /u01/app/oracle/product/19c/
+cd /u01/app/oracle/product/19c/
+unzip LINUX.X64_193000_db_home.zip
+
+as ROOT user
+[root@centos8 ~]# mv /etc/oraInst.loc /etc/oraInst.loc_bck
+
+AS ORACLE user
+export CV_ASSUME_DISTID=OEL7.8
+export OH_NEW=/u01/app/oracle/product/19c
+export ORA_INVENTORY=/u01/app/oraInventory
+export SW_DIRECTORY=/u01/app/oracle/product/19c
+export ORACLE_HOSTNAME=centos8
+export ORACLE_BASE=/u01/app/oracle/product
+cd $SW_DIRECTORY
+
+AS ORACLE user
+./runInstaller -ignorePrereq -waitforcompletion -silent \
+    -responseFile ${SW_DIRECTORY}/install/response/db_install.rsp \
+    oracle.install.option=INSTALL_DB_SWONLY \
+    ORACLE_HOSTNAME=${ORACLE_HOSTNAME} \
+    UNIX_GROUP_NAME=oinstall \
+    INVENTORY_LOCATION=${ORA_INVENTORY} \
+    SELECTED_LANGUAGES=en,en_GB \
+    ORACLE_HOME=${OH_NEW} \
+    ORACLE_BASE=${ORACLE_BASE} \
+    oracle.install.db.InstallEdition=EE \
+    oracle.install.db.OSDBA_GROUP=dba \
+    oracle.install.db.OSBACKUPDBA_GROUP=dba \
+    oracle.install.db.OSDGDBA_GROUP=dba \
+    oracle.install.db.OSKMDBA_GROUP=dba \
+    oracle.install.db.OSRACDBA_GROUP=dba \
+    SECURITY_UPDATES_VIA_MYORACLESUPPORT=false \
+    DECLINE_SECURITY_UPDATES=true
+
+AS ORACLE user
+export ORACLE_SID=tmyDB
+cd /u01/app/oracle/product/19c/bin
+./dbca -silent -createDatabase                            \
+     -templateName General_Purpose.dbc                  \
+     -gdbname ${ORACLE_SID} -sid  ${ORACLE_SID}         \
+     -characterSet AL32UTF8                             \
+     -sysPassword start123                            \
+     -systemPassword start123                          \
+     -createAsContainerDatabase false                   \
+     -totalMemory 3000                                  \
+     -storageType FS                                    \
+     -datafileDestination /u01/data/  \
+     -emConfiguration NONE                              \
+     -ignorePreReqs -sampleSchema true
+     
+AS ORACLE user 
+export ORACLE_BASE=/u01/app/oracle/product
+export ORACLE_HOME=/u01/app/oracle/product/19c
+export ORACLE_SID=tmyDB    
+export PATH=$PATH:/u01/app/oracle/product/19c/bin
+sqlplus / as sysdba
+
+
+
+
+
 
                   EXPDB / IMPDP
 --------------------------------------------------------
