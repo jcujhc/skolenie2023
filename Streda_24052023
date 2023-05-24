@@ -66,11 +66,123 @@ export ORACLE_SID=tmyDB
 export PATH=$PATH:/u01/app/oracle/product/19c/bin
 sqlplus / as sysdba
 
+-------------------------------------------------------------------------------------------------------------------------
+MATERIALIZED VIEW:
+
+create table t1
+as
+select rownum id, a.*
+  from all_objects a
+ where 1=0;
+
+15x
+insert 
+    into t1
+    select rownum, a.*
+      from all_objects a;
+commit;
+
+
+create table t2
+as
+select * from t1;
+
+col SEGMENT_NAME for a10
+select segment_name,sum(bytes)/1024/1024 MB from dba_segments where segment_type='TABLE' 
+and segment_name in ('T1','T2') group by segment_name;
+
+SEGMENT_NA         MB
+---------- ----------
+T1                178
+T2                175
+
+exec dbms_stats.gather_table_stats(ownname=>'STUDENT15',tabname=>'T1',cascade=>true,no_invalidate=>false,degree=>4);
+exec dbms_stats.gather_table_stats(ownname=>'STUDENT15',tabname=>'T2',cascade=>true,no_invalidate=>false,degree=>4);
 
 
 
+alter session set nls_date_format="yyyy-mm-dd hh24:mi:ss";
+
+set lines 200
+col OWNER for a20
+col OBJECT_NAME for a30
+select t1.ID,t1.OWNER,t1.CREATED,t1.LAST_DDL_TIME
+from t1,t2 where t1.id=t2.id and t1.ID=62766 order by 1;
+
+CREATE  VIEW JCUJ_VIEW as 
+select t1.ID,t1.OWNER,t1.CREATED,t1.LAST_DDL_TIME
+from t1,t2 where t1.id=t2.id and t1.ID=62766 order by 1;
 
 
+CREATE MATERIALIZED VIEW TM_VIEW
+  BUILD IMMEDIATE
+  REFRESH FORCE ON DEMAND
+  ENABLE QUERY REWRITE
+  AS
+select t1.ID,t1.OWNER,t1.CREATED,t1.LAST_DDL_TIME
+from t1,t2 where t1.id=t2.id and t1.ID=62766 order by 1;
+
+
+SQL> col SEGMENT_NAME for a10
+select segment_name,sum(bytes)/1024/1024 MB from dba_segments where
+segment_name in ('T1','T2','TM_VIEW','JCUJ_VIEW') group by segment_name;
+
+SEGMENT_NA         MB
+---------- ----------
+T1                178
+T2                175
+TM_VIEW         .0625
+
+
+
+select * from JCUJ_VIEW;
+
+select * from TM_VIEW;
+
+update  t1 set OWNER='JOZO' where t1.ID=62766;
+update  t2 set OWNER='JOZO' where t2.ID=62766;
+
+select * from JCUJ_VIEW;
+
+select * from TM_VIEW;
+
+BEGIN
+DBMS_MVIEW.REFRESH('TM_VIEW');
+END;
+/
+
+select * from TM_VIEW;
+
+BEGIN
+DBMS_MVIEW.REFRESH('T1');
+END;
+/
+
+DROP MATERIALIZED VIEW TM_VIEW;
+DROP VIEW JCUJ_VIEW;
+DROP TABLE T1;
+DROP TABLE T2;
+
+col SEGMENT_NAME for a10
+select segment_name,sum(bytes)/1024/1024 MB from dba_segments where segment_type='TABLE' 
+and segment_name=upper('&TABLE_NAME') group by segment_name;
+
+set lines 200
+col FILE_NAME for a40
+select FILE_NAME,TABLESPACE_NAME,BYTES/1024/1024 MB from dba_data_files;
+
+set lines 200
+col OWNER for a30
+col TABLE_NAME for a30
+select OWNER,TABLE_NAME,TABLESPACE_NAME,NUM_ROWS from dba_tables;
+
+set lines 200
+col OWNER for a30
+col TABLE_NAME for a30
+select OWNER,TABLE_NAME,TABLESPACE_NAME,NUM_ROWS from dba_tables where owner like 'STUDENT%';
+
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------
                   EXPDB / IMPDP
 --------------------------------------------------------
 EXPDP - slúži na export dát pomocou datapump utility
