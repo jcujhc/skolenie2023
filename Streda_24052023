@@ -304,8 +304,8 @@ DEMO:
 mkdir /u01/data/export
 SQL> create or replace directory DPDIR as '/u01/data/export';
 
-revoke dba from student15;
-grant read, write on directory DPDIR to student15;
+SQL> revoke dba from student15;
+SQL> grant read, write on directory DPDIR to student15;
 expdp student15/start123@DB_tSKDB dumpfile=expdp_SCH_STUDENT15_24052023.dmp LOGFILE=expdp_db.log directory=DPDIR schemas=student15
 
 AS SYSDBA
@@ -324,19 +324,18 @@ impdp \'/ as sysdba\' dumpfile=expdp_SCH_STUDENT15_24052023.dmp directory=DPDIR 
 SQL> create temporary tablespace SYS_TMP_1 tempfile '/u01/data/TMYDB/SYS_TMP_1_1.dbf' size 2G;
 SQL> select tablespace_name from dba_tablespaces;
 
-
-drop user STUDENT15;
-create role DEMO;
-create role DEMO2;
+SQL> drop user STUDENT15;
+SQL> create role DEMO;
+SQL> create role DEMO2;
 impdp \'/ as sysdba\' dumpfile=expdp_SCH_STUDENT15_24052023.dmp directory=DPDIR schemas=STUDENT15 log=expdp.log
 
-GRANT CREATE MATERIALIZED VIEW TO STUDENT15;
-select * from dba_directories where DIRECTORY_NAME='DPDIR';
+SQL> GRANT CREATE MATERIALIZED VIEW TO STUDENT15;
+SQL> select * from dba_directories where DIRECTORY_NAME='DPDIR';
 expdp \"/ as sysdba\" dumpfile=expdp_STUDENT15.dmp directory=DPDIR schemas=STUDENT15 log=expdp.log
 
 impdp \"/ as sysdba\" dumpfile=expdp_SCH_STUDENT15_24052023.dmp directory=DPDIR schemas=STUDENT15 log=expdp.log REMAP_SCHEMA=STUDENT15:APPLIKACNA_SCH
 
-
+SQL>
 create user APPLIKACNA_SCH identified by "start123" default tablespace USERS temporary tablespace SYS_TMP_1 profile DEFAULT;
 grant DEMO to APPLIKACNA_SCH WITH ADMIN OPTION;
 grant DEMO2 to APPLIKACNA_SCH WITH ADMIN OPTION;
@@ -347,10 +346,26 @@ alter user APPLIKACNA_SCH quota 6442450944 on USERS;
 alter user APPLIKACNA_SCH default role DEMO,DEMO2,EXP_FULL_DATABASE;
 
 
-create tablespace NEW_TBS datafile '/u01/data/TMYDB/new_tbs_01.dbf' size 5G;
+SQL> create tablespace NEW_TBS datafile '/u01/data/TMYDB/new_tbs_01.dbf' size 5G;
 impdp \"/ as sysdba\" dumpfile=expdp_SCH_STUDENT15_24052023.dmp directory=DPDIR schemas=STUDENT15 log=expdp.log REMAP_SCHEMA=STUDENT15:IKDB REMAP_TABLESPACE=USERS:NEW_TBS
 
 
+# HISTORY Z MOJEJ PUTTY:
+scp oracle@10.233.133.153:/u01/data/export/expdp_SCH_STUDENT15_24052023.dmp /u01/data/DUMP/
+impdp \'/ as sysdba\' dumpfile=expdp_SCH_STUDENT15_24052023.dmp directory=DPDIR schemas=STUDENT15 log=expdp.log
+impdp \'/ as sysdba\' dumpfile=expdp_SCH_STUDENT15_24052023.dmp directory=DPDIR schemas=STUDENT15 log=expdp.log
+impdp \'/ as sysdba\' dumpfile=expdp_SCH_STUDENT15_24052023.dmp directory=DPDIR schemas=STUDENT15 log=expdp.log
+expdp \"/ as sysdba\" dumpfile=expdp_STUDENT15.dmp directory=DPDIR schemas=STUDENT15 log=expdp.log
+impdp \"/ as sysdba\" dumpfile=expdp_SCH_STUDENT15.dmp directory=DPDIR schemas=STUDENT15 log=expdp.log REMAP_SCHEMA=STUDENT15:APPLIKACNA_SCH
+impdp \"/ as sysdba\" dumpfile=expdp_STUDENT15.dmp directory=DPDIR schemas=STUDENT15 log=expdp.log REMAP_SCHEMA=STUDENT15:APPLIKACNA_SCH
+expdp \"/ as sysdba\" dumpfile=expdp_STUDENT15.dmp directory=DPDIR schemas=STUDENT15 log=expdp.log
+impdp \"/ as sysdba\" dumpfile=expdp_SCH_STUDENT15_24052023.dmp directory=DPDIR schemas=STUDENT15 log=expdp.log REMAP_SCHEMA=STUDENT15:APPLIKACNA_SCH
+impdp \"/ as sysdba\" dumpfile=expdp_SCH_STUDENT15_24052023.dmp directory=DPDIR schemas=STUDENT15 log=expdp.log REMAP_SCHEMA=STUDENT15:APPLIKACNA_SCH
+impdp \"/ as sysdba\" dumpfile=expdp_SCH_STUDENT15_24052023.dmp directory=DPDIR schemas=STUDENT15 log=expdp.log
+impdp \"/ as sysdba\" dumpfile=expdp_SCH_STUDENT15_24052023.dmp directory=DPDIR schemas=STUDENT15 log=expdp.log table_exists_action=replace
+impdp \"/ as sysdba\" dumpfile=expdp_SCH_STUDENT15_24052023.dmp directory=DPDIR schemas=STUDENT15 log=expdp.log table_exists_action=replace
+impdp \"/ as sysdba\" dumpfile=expdp_SCH_STUDENT15_24052023.dmp directory=DPDIR schemas=STUDENT15 log=expdp.log
+impdp \"/ as sysdba\" dumpfile=expdp_SCH_STUDENT15_24052023.dmp directory=DPDIR tables=STUDENT15.t2 log=expdp.log table_exists_action=replace
 
 
 
