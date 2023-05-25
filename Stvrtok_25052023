@@ -1,7 +1,7 @@
 ## PRACA Z DATAMI
 -------------------------------------------------------------------------------------
 sqlplus STUDENT15           (nie: sqlplus / as sysdba)
-
+SQL>
 CREATE TABLE oddelenia
 ( dept_id number NOT NULL,
   dept_name varchar2(50) NOT NULL,
@@ -43,17 +43,17 @@ select * from zamestnanci;
 select * from oddelenia;
 
 1/ skusit vlozit seba do tabulky zamestnanci -> cize nejako upravit tento INSERT
-INSERT INTO zamestnanci (emp_number, last_name, first_name, salary, dept_id) VALUES (401932,'Bacova','Daniela',1370,280905);
+SQL> INSERT INTO zamestnanci (emp_number, last_name, first_name, salary, dept_id) VALUES (401932,'Bacova','Daniela',1370,280905);
 
 2/ skusit vymazat zamestnanca 'Lipowski','Lubomir' pomocou prikazu
-DELETE FROM zamestnanci WHERE .....
+SQL> DELETE FROM zamestnanci WHERE .....
 
 3/ skusit nastavit 'Liba','Daniel' plat o 200 eur vyzsi
-UPDATE zamestnanci SET salary .... where ....
+SQL> UPDATE zamestnanci SET salary .... where ....
 
 4/ urobit zalohu tabulky zamestnnanci aj oddelenia pomocou prikazu:
-create table zamestnanci_bck as select * from zamestnanci;   (obdobne pre oddelenia)
+SQL> create table zamestnanci_bck as select * from zamestnanci;   (obdobne pre oddelenia)
 
 5/ vytvorit novy tablespace a pokusit sa remap TBS
-create tablespace NEW_TBS datafile '/u01/data/TMYDB/new_tbs_01.dbf' size 5G;
+SQL> create tablespace NEW_TBS datafile '/u01/data/TMYDB/new_tbs_01.dbf' size 5G;
 impdp \"/ as sysdba\" dumpfile=expdp_SCH_STUDENT15_24052023.dmp directory=DPDIR schemas=STUDENT15 log=expdp.log REMAP_SCHEMA=STUDENT15:IKDB REMAP_TABLESPACE=USERS:NEW_TBS
