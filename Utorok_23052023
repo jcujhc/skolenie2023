@@ -238,49 +238,7 @@ end;
 /
 
 
-## PRACA Z DATAMI
--------------------------------------------------------------------------------------
-CREATE TABLE oddelenia
-( dept_id number NOT NULL,
-  dept_name varchar2(50) NOT NULL,
-  dept_headof varchar2(50) NOT NULL,
-);
 
-CREATE TABLE zamestnanci
-( emp_number number NOT NULL,
-  last_name varchar2(50) NOT NULL,
-  first_name varchar2(50) NOT NULL,
-  salary number,
-  dept_id number,
-);
-
-
-INSERT INTO oddelenia (dept_id, dept_name, dept_headof) VALUES (114567,'GSO SAP 5','Verner, Igor');
-INSERT INTO oddelenia (dept_id, dept_name, dept_headof) VALUES (221267,'TSO AM 4','Lycka-Kubalakova, Edita');
-INSERT INTO oddelenia (dept_id, dept_name, dept_headof) VALUES (327659,'LIM','Kasper, Kornelis');
-INSERT INTO oddelenia (dept_id, dept_name, dept_headof) VALUES (309217,'EMEA GBO and LIM','Tokarova, Andrea');
-INSERT INTO oddelenia (dept_id, dept_name, dept_headof) VALUES (280905,'Citrix1','Zelikova, Jana');
-INSERT INTO oddelenia (dept_id, dept_name, dept_headof) VALUES (328245,'CU Shell','Fric Jozef');
-INSERT INTO oddelenia (dept_id, dept_name, dept_headof) VALUES (222824,'PC and Platform Services','Holan Peter');
-INSERT INTO oddelenia (dept_id, dept_name, dept_headof) VALUES (311579,'DCO Systems Operations','Liba Dusan');
-
-INSERT INTO zamestnanci (emp_number, last_name, first_name, salary, dept_id) VALUES (460061, 'Molnar','Ivan', 700, 114567);
-INSERT INTO zamestnanci (emp_number, last_name, first_name, salary, dept_id) VALUES (329099, 'Molnar','Jozef', 820, 327659);
-INSERT INTO zamestnanci (emp_number, last_name, first_name, salary, dept_id) VALUES (534001, 'Beck','Samuel', 900, 309217);
-INSERT INTO zamestnanci (emp_number, last_name, first_name, salary, dept_id) VALUES (261942, 'Liba','Daniel', 650, 309217);
-INSERT INTO zamestnanci (emp_number, last_name, first_name, salary, dept_id) VALUES (209818, 'Vancakova','Ivana', 1200, 221267);
-INSERT INTO zamestnanci (emp_number, last_name, first_name, salary, dept_id) VALUES (292857, 'Szaboova', 'Slava',1500,328245);
-INSERT INTO zamestnanci (emp_number, last_name, first_name, salary, dept_id) VALUES (259133, 'Lipowski','Lubomir',1390,311579);
-INSERT INTO zamestnanci (emp_number, last_name, first_name, salary, dept_id) VALUES (234501, 'Reckert','Falk',1900,311579); 
-INSERT INTO zamestnanci (emp_number, last_name, first_name, salary, dept_id) VALUES (401932,'Bacova','Daniela',1370,280905); 
-INSERT INTO zamestnanci (emp_number, last_name, first_name, salary, dept_id) VALUES (401484,'Kollarova','Veronika',1250,309217); 
-
-select * from zamestnanci;
-
-UPDATE zamestnanci SET salary = 2000;
-
-DELETE FROM zamestnanci; 
-DELETE FROM zamestnanci WHERE emp_number=XXX;
 
 
 
