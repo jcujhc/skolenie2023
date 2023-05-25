@@ -1,1 +1,11 @@
 
+
+
+
+
+
+
+create tablespace NEW_TBS datafile '/u01/data/TMYDB/new_tbs_01.dbf' size 5G;
+
+
+impdp \"/ as sysdba\" dumpfile=expdp_SCH_STUDENT15_24052023.dmp directory=DPDIR schemas=STUDENT15 log=expdp.log REMAP_SCHEMA=STUDENT15:IKDB REMAP_TABLESPACE=USERS:NEW_TBS
