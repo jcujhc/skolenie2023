@@ -109,9 +109,24 @@ commit;
 
 create table "ovocie" (nazov varchar(20));
 create table "Ovocie" (nazov varchar(20));
-insert into ovocie ('jablko');
-insert into ovocie ('mandarinka');
+insert into ovocie values ('jablko');
 commit;
+
+SQL> select table_name from user_tables where table_name like 'o%' or table_name like 'O%';
+
+TABLE_NAME
+--------------------------------------------------------------------------------
+OVOCIE
+Ovocie
+ovocie
+
+SQL> select * from ovocie;
+
+NAZOV
+--------------------
+pomaranc
+jablko
+
 
 
 
@@ -128,8 +143,11 @@ $ORACLE_HOME/OPatch/opatch lsinventory
 -rw-r--r--. 1 oracle oinstall 1495300727 May 26 11:31 p32218454_190000_Linux-x86-64.zip
 -rw-r--r--. 1 oracle oinstall  124843817 May 26 11:32 p6880880_122010_Linux-x86-64.zip
 
-unzip p32218454_190000_Linux-x86-64.zip
+/u01/app/oracle
+cp p6880880_122010_Linux-x86-64.zip $ORACLE_HOME
 unzip p6880880_122010_Linux-x86-64.zip
+
+
 
 
 
