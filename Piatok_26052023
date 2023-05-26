@@ -91,12 +91,12 @@ exit;
 3/  updatnite tabulku futbalisti nastavte plat 10000 pre futbalistu s menom Laco
 4/  updatnite tabulku futbalisti zvyste plat o 150eur pre futbalistu s id 2 a id 3.
 5/ vymazte hraca z tabulky futbalisti s menom: 'Ruslan', 'Lubarskiy'
-
-
+6/ vyexportujte a naimportujte data
 select * from dba_directories where DIRECTORY_NAME='DPDIR';
 expdp \"/ as sysdba\" dumpfile=expdp_STUDENT15.dmp directory=DPDIR schemas=STUDENT15 log=expdp.log
 impdp \"/ as sysdba\" dumpfile=expdp_SCH_STUDENT15_24052023.dmp directory=DPDIR schemas=STUDENT15 log=expdp.log REMAP_SCHEMA=STUDENT15:NEW_APPLIKACNA
-
+7/ overte ulohu 6:
+   select table_name, ownere from dba_tables_where owner in ('STUDENT15','NEW_APPLIKACNA');
 
 
 DEMO: tables STUDENT15
