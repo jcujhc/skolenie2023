@@ -150,6 +150,10 @@ cp /u01/app/oracle/p6880880_122010_Linux-x86-64.zip
 mv Opatch Opatch_bck
 unzip p6880880_122010_Linux-x86-64.zip
 
+SQL> shu immediate;
+
+lsnrctl stop LISTENER
+
 
 
 
