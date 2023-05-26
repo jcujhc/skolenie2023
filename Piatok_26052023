@@ -89,6 +89,19 @@ exit;
 
 
 
+DEMO: tables STUDENT15
+-------------------------------------
+create table ovocie (nazov varchar(20));
+select table_name from user_tables where table_name = 'ovocie';
+insert into ovocie ('pomaranc');
+commit;
+
+create table "ovocie" (nazov varchar(20));
+create table "Ovocie" (nazov varchar(20));
+insert into ovocie ('jablko');
+insert into ovocie ('mandarinka');
+commit;
+
 
 
 
