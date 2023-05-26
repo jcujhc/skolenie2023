@@ -115,4 +115,26 @@ commit;
 
 
 
+PATCHING
+-------------------------------------
+$ORACLE_HOME/OPatch/opatch lspatches
+
+29585399;OCW RELEASE UPDATE 19.3.0.0.0 (29585399)
+29517242;Database Release Update : 19.3.0.0.190416 (29517242)
+OPatch succeeded.
+
+$ORACLE_HOME/OPatch/opatch lsinventory
+
+-rw-r--r--. 1 oracle oinstall 1495300727 May 26 11:31 p32218454_190000_Linux-x86-64.zip
+-rw-r--r--. 1 oracle oinstall  124843817 May 26 11:32 p6880880_122010_Linux-x86-64.zip
+
+unzip p32218454_190000_Linux-x86-64.zip
+unzip p6880880_122010_Linux-x86-64.zip
+
+
+
+
+
+
+
 
