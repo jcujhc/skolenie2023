@@ -93,6 +93,11 @@ exit;
 5/ vymazte hraca z tabulky futbalisti s menom: 'Ruslan', 'Lubarskiy'
 
 
+select * from dba_directories where DIRECTORY_NAME='DPDIR';
+expdp \"/ as sysdba\" dumpfile=expdp_STUDENT15.dmp directory=DPDIR schemas=STUDENT15 log=expdp.log
+impdp \"/ as sysdba\" dumpfile=expdp_STUDENT15.dmp directory=DPDIR schemas=STUDENT15 log=expdp.log
+
+
 
 DEMO: tables STUDENT15
 -------------------------------------
