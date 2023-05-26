@@ -37,6 +37,11 @@ SQL> select flashback_on from v$database;
 
 SQL> create restore point CLEAN_DB guarantee flashback database; 
 
+sqlplus STUDENT15/start123
+SQL> create table T1_backup as select * from t1;
+SQL> create table T2_backup as select * from t2;
+SQL> select to_char(SYSDATE, 'dd.mm.yyyy hh24:mi:ss');
+
 SQL> shut immediate;
 SQL> startup mount;
 SQL> FLASHBACK DATABASE TO TIMESTAMP TO_TIMESTAMP('2023-05-26 09:45:00', 'YYYY-MM-DD HH24:MI:SS');
