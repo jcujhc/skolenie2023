@@ -144,8 +144,16 @@ $ORACLE_HOME/OPatch/opatch lsinventory
 -rw-r--r--. 1 oracle oinstall  124843817 May 26 11:32 p6880880_122010_Linux-x86-64.zip
 
 /u01/app/oracle
-cp p6880880_122010_Linux-x86-64.zip $ORACLE_HOME
+unzip p32218454_190000_Linux-x86-64.zip 
+cd $ORACLE_HOME
+cp /u01/app/oracle/p6880880_122010_Linux-x86-64.zip 
+mv Opatch Opatch_bck
 unzip p6880880_122010_Linux-x86-64.zip
+
+
+
+
+
 
 
 
