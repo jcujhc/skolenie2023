@@ -60,7 +60,7 @@ SQL> alter database open resetlogs;
 ## ULOHA
 --------------------------------------------------
 0/ vytvorte si subor cez: vi futbalisti.txt
-   vlozte do suboru riadok 59 - 81
+   vlozte do suboru riadok 63 - 87
 
 spool /tmp/futbalosti.log
 set lines 200 pages 2000
