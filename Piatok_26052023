@@ -1,3 +1,7 @@
+## LRWRAP
+---------------------------------------------------------------------------------
+https://oracle-base.com/articles/linux/rlwrap
+
 rpm -Uvh https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
 yum install rlwrap
 alias sql='rlwrap sqlplus / as sysdba'
@@ -23,20 +27,17 @@ SQL> select * from dual;
 
 
 
-
-
+## FLASHBACK
+---------------------------------------------------------------------------------
 SQL> alter system set db_recovery_file_dest='/u02/flash_logs' SCOPE=spfile;
 SQL> alter system set db_recovery_file_dest_size=50G SCOPE=spfile;
-SQL> alter system set db_flashback_retention_target=2880;
 
 SQL> alter database flashback on;
-SQL> alter database open;
 SQL> select flashback_on from v$database;
+
+SQL> create restore point CLEAN_DB guarantee flashback database; 
 
 SQL> shut immediate;
 SQL> startup mount;
-
-
-SQL> FLASHBACK DATABASE TO TIMESTAMP TO_TIMESTAMP('2023-05-26 18:30:00', 'YYYY-MM-DD HH24:MI:SS');
-
-SQL> Alter database open resetlogs;
+SQL> FLASHBACK DATABASE TO TIMESTAMP TO_TIMESTAMP('2023-05-26 09:45:00', 'YYYY-MM-DD HH24:MI:SS');
+SQL> alter database open resetlogs;
