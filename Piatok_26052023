@@ -28,7 +28,7 @@ SQL> select * from dual;
 ## FLASHBACK
 ---------------------------------------------------------------------------------
 SQL> alter system set db_recovery_file_dest='/home/oracle/backup' SCOPE=spfile;
-SQL> alter system set db_recovery_file_dest_size=50G SCOPE=spfile;
+SQL> alter system set db_recovery_file_dest_size=10G SCOPE=spfile;
 SQL> show parameter recovery
 
 
