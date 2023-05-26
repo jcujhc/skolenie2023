@@ -53,6 +53,7 @@ SQL> shut immediate;
 SQL> startup mount;
 SQL> FLASHBACK DATABASE to restore point MY_RP;
 alebo SQL> FLASHBACK DATABASE TO TIMESTAMP TO_TIMESTAMP('2023-05-26 09:45:00', 'YYYY-MM-DD HH24:MI:SS');
+## FLASHBACK TABLE STUDENT15.AUTA TO BEFORE DROP;
 SQL> alter database open resetlogs;
 
 
