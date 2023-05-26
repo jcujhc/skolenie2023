@@ -25,6 +25,7 @@ X
 
 SQL> select * from dual;
 
+
 ## FLASHBACK
 ---------------------------------------------------------------------------------
 SQL> alter system set db_recovery_file_dest='/home/oracle/backup' SCOPE=spfile;
@@ -48,3 +49,46 @@ SQL> shut immediate;
 SQL> startup mount;
 SQL> FLASHBACK DATABASE TO TIMESTAMP TO_TIMESTAMP('2023-05-26 09:45:00', 'YYYY-MM-DD HH24:MI:SS');
 SQL> alter database open resetlogs;
+
+
+
+## ULOHA
+--------------------------------------------------
+0/ vytvorte si subor cez: vi futbalisti.txt
+   vlozte do suboru riadok 59 - 81
+
+spool /tmp/futbalosti.log
+set lines 200 pages 2000
+set echo ON time ON timing ON
+
+create table futbalisti
+(id number,
+meno varchar2(20),
+priezvisko varchar2(30),
+plat number,
+inserted date
+);
+insert into futbalisti values (1, 'Jozef', 'Palencar', 1000, sysdate);
+insert into futbalisti values (2, 'Peter', 'Pekarik', 2000,sysdate);
+insert into futbalisti values (3, 'Ondrej', 'Duda', 3000,sysdate);
+insert into futbalisti values (4, 'Laco', 'Molnar', 4000,sysdate);
+insert into futbalisti values (5, 'Jozko', 'Kozlej', 5000,sysdate);
+insert into futbalisti values (6, 'Vlado', 'Zvara', 6000,sysdate);
+insert into futbalisti values (7, 'Pavol', 'Dina', 7000,sysdate);
+insert into futbalisti values (8, 'Ruslan', 'Lubarskiy',8000, sysdate);
+commit;
+
+select * from futbalisti;
+exit;
+
+1/ prihlaste sa do databazy pomocou STUDENT15 usera a spuste script futbalisti.txt 
+2/ urobte backup tabulky futbalisti (futbalisti_bck) pomocou sql prikazu
+3/  updatnite tabulku futbalisti nastavte plat 10000 pre futbalistu s menom Laco
+4/  updatnite tabulku futbalisti zvyste plat o 150eur pre futbalistu s id 2 a id 3.
+5/ vymazte hraca z tabulky futbalisti s menom: 'Ruslan', 'Lubarskiy'
+
+
+
+
+
+
