@@ -1,4 +1,8 @@
 
+SQL> alter system set db_recovery_file_dest='/u02/flash_logs' SCOPE=spfile;
+SQL> alter system set db_recovery_file_dest_size=50G SCOPE=spfile;
+
+
 SQL> alter database flashback on;
 SQL> alter database open;
 SQL> select flashback_on from v$database;
