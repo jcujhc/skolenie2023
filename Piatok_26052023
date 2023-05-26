@@ -25,22 +25,24 @@ X
 
 SQL> select * from dual;
 
-
-
 ## FLASHBACK
 ---------------------------------------------------------------------------------
-SQL> alter system set db_recovery_file_dest='/u02/flash_logs' SCOPE=spfile;
+SQL> alter system set db_recovery_file_dest='/home/oracle/backup' SCOPE=spfile;
 SQL> alter system set db_recovery_file_dest_size=50G SCOPE=spfile;
+SQL> show parameter recovery
+
 
 SQL> alter database flashback on;
 SQL> select flashback_on from v$database;
 
-SQL> create restore point CLEAN_DB guarantee flashback database; 
+SQL> create restore point MY_RP guarantee flashback database; 
 
 sqlplus STUDENT15/start123
 SQL> create table T1_backup as select * from t1;
 SQL> create table T2_backup as select * from t2;
 SQL> select to_char(SYSDATE, 'dd.mm.yyyy hh24:mi:ss');
+SQL> truncate table t1;
+SQL> drop table t2;
 
 SQL> shut immediate;
 SQL> startup mount;
