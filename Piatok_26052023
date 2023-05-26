@@ -155,10 +155,14 @@ SQL> shu immediate;
 lsnrctl stop LISTENER
 
 cd /u01/app/oracle/32218454
+
 $ORACLE_HOME/OPatch/opatch apply
-$ORACLE_HOME/OPatch/datapatch -verbose
 
 SQL> startup
+
+$ORACLE_HOME/OPatch/datapatch -verbose
+
+
 
 
 
