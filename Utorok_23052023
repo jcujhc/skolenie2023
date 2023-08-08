@@ -1,6 +1,6 @@
 
 rm -rf /home/gauss-0X/oracle/product/19.0.0/client_1/network/admin/tnsnames.ora
-
+#
 vi /home/gauss-0X/oracle/product/19.0.0/client_1/network/admin/tnsnames.ora
 orcl =
   (DESCRIPTION =
