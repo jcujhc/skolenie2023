@@ -265,6 +265,14 @@ end;
 
 
 
+s+
+@/tmp/sw/VYT_TAB_OZ.txt
+select table_name from dba_tables;
+select table_name from user_tables;
+select table_name from all_tables;
+
+
+
 
 
 
