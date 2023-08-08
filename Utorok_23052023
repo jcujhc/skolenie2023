@@ -1,4 +1,30 @@
 
+rm -rf /home/gauss-0X/oracle/product/19.0.0/client_1/network/admin/tnasname.ora
+
+vi /home/gauss-07/oracle/product/19.0.0/client_1/network/admin/tnasname.ora
+orcl =
+  (DESCRIPTION =
+    (ADDRESS = (PROTOCOL = TCP)(HOST = 10.233.133.28)(PORT = 1521))
+    (CONNECT_DATA =
+      (SERVER = DEDICATED)
+      (SERVICE_NAME = orcl)
+    )
+  )
+
+cd 
+cd /home/gauss-0X
+vi .bash_profile
+## pridat na koniec suboru
+export ORACLE_HOME=/home/gauss-0X/oracle/product/19.0.0/client_1
+export PATH=$PATH:$ORACLE_HOME/bin
+alias stud='sqlplus student0X@orcl'
+alias s+='rlwrap sqlplus student0X/start123@orcl'
+
+
+
+
+
+
 s+
 SELECT SYS_CONTEXT ('USERENV', 'SESSION_USER') FROM DUAL;
 SELECT SYS_CONTEXT ('USERENV', 'DB_NAME') FROM DUAL;
