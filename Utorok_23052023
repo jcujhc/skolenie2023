@@ -1,7 +1,7 @@
 
 rm -rf /home/gauss-0X/oracle/product/19.0.0/client_1/network/admin/tnasname.ora
 
-vi /home/gauss-07/oracle/product/19.0.0/client_1/network/admin/tnasname.ora
+vi /home/gauss-0X/oracle/product/19.0.0/client_1/network/admin/tnasname.ora
 orcl =
   (DESCRIPTION =
     (ADDRESS = (PROTOCOL = TCP)(HOST = 10.233.133.28)(PORT = 1521))
