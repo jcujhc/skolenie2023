@@ -267,6 +267,7 @@ end;
 
 s+
 set echo on time on timing on
+create table T1_JOZO (id number);
 @/tmp/sw/VYT_TAB_OZ.txt
 select table_name from dba_tables;
 select table_name from user_tables;
