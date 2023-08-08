@@ -276,7 +276,7 @@ select table_name from all_tables;
 
 
 
-
+update student07.COUNTRIES set COUNTRY_NAME='LALA' where COUNTRY_ID=546;
 
 
 
