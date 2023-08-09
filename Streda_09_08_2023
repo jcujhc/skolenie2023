@@ -1,6 +1,6 @@
 ULOHY
-1. V noci som prestavil port na Listenery na 1525
-   v tnsnames.ora si zmente port na 1525 a pripojte sa do databazi
+1. prestavil som port na listeneri na 1525 na Databazovom servri
+   u vas (na clientskych servroch) v tnsnames.ora si zmente port na 1525 a pripojte sa do databazi
 
 2. spustite script nachadzajuci sa v /tmp/sw/import_zamestnanci.sql
 
