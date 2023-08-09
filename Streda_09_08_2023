@@ -2,7 +2,7 @@ ULOHY
 1. V noci som prestavil port na Listenery na 1525
    v tnsnames.ora si zmente port na 1525 a pripojte sa do databazi
 
-2. spustite script nachadzajuci sa v /tmp/import_zamestnanci.sql
+2. spustite script nachadzajuci sa v /tmp/sw/import_zamestnanci.sql
 
 3. pomocou desc a count(*) zistite kolko stlpcov a riadkov ma tabulka ZAM
 
