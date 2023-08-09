@@ -1,0 +1,270 @@
+## PRACA Z DATAMI
+-------------------------------------------------------------------------------------
+sqlplus STUDENT15           (nie: sqlplus / as sysdba)
+SQL>
+CREATE TABLE oddelenia
+( dept_id number NOT NULL,
+  dept_name varchar2(50) NOT NULL,
+  dept_headof varchar2(50) NOT NULL
+);
+
+CREATE TABLE zamestnanci
+( emp_number number NOT NULL,
+  last_name varchar2(50) NOT NULL,
+  first_name varchar2(50) NOT NULL,
+  salary number,
+  dept_id number
+);
+
+
+INSERT INTO oddelenia (dept_id, dept_name, dept_headof) VALUES (114567,'GSO SAP 5','Verner, Igor');
+INSERT INTO oddelenia (dept_id, dept_name, dept_headof) VALUES (221267,'TSO AM 4','Lycka-Kubalakova, Edita');
+INSERT INTO oddelenia (dept_id, dept_name, dept_headof) VALUES (327659,'LIM','Kasper, Kornelis');
+INSERT INTO oddelenia (dept_id, dept_name, dept_headof) VALUES (309217,'EMEA GBO and LIM','Tokarova, Andrea');
+INSERT INTO oddelenia (dept_id, dept_name, dept_headof) VALUES (280905,'Citrix1','Zelikova, Jana');
+INSERT INTO oddelenia (dept_id, dept_name, dept_headof) VALUES (328245,'CU Shell','Fric Jozef');
+INSERT INTO oddelenia (dept_id, dept_name, dept_headof) VALUES (222824,'PC and Platform Services','Holan Peter');
+INSERT INTO oddelenia (dept_id, dept_name, dept_headof) VALUES (311579,'DCO Systems Operations','Liba Dusan');
+commit;
+
+INSERT INTO zamestnanci (emp_number, last_name, first_name, salary, dept_id) VALUES (460061, 'Molnar','Ivan', 700, 114567);
+INSERT INTO zamestnanci (emp_number, last_name, first_name, salary, dept_id) VALUES (329099, 'Molnar','Jozef', 820, 327659);
+INSERT INTO zamestnanci (emp_number, last_name, first_name, salary, dept_id) VALUES (534001, 'Beck','Samuel', 900, 309217);
+INSERT INTO zamestnanci (emp_number, last_name, first_name, salary, dept_id) VALUES (261942, 'Liba','Daniel', 650, 309217);
+INSERT INTO zamestnanci (emp_number, last_name, first_name, salary, dept_id) VALUES (209818, 'Vancakova','Ivana', 1200, 221267);
+INSERT INTO zamestnanci (emp_number, last_name, first_name, salary, dept_id) VALUES (292857, 'Szaboova', 'Slava',1500,328245);
+INSERT INTO zamestnanci (emp_number, last_name, first_name, salary, dept_id) VALUES (259133, 'Lipowski','Lubomir',1390,311579);
+INSERT INTO zamestnanci (emp_number, last_name, first_name, salary, dept_id) VALUES (234501, 'Reckert','Falk',1900,311579); 
+INSERT INTO zamestnanci (emp_number, last_name, first_name, salary, dept_id) VALUES (401932,'Bacova','Daniela',1370,280905); 
+INSERT INTO zamestnanci (emp_number, last_name, first_name, salary, dept_id) VALUES (401484,'Kollarova','Veronika',1250,309217); 
+commit;
+
+select * from zamestnanci;
+select * from oddelenia;
+
+1/ skusit vlozit seba do tabulky zamestnanci -> cize nejako upravit tento INSERT
+SQL> INSERT INTO zamestnanci (emp_number, last_name, first_name, salary, dept_id) VALUES (401932,'Bacova','Daniela',1370,280905);
+
+2/ skusit vymazat zamestnanca 'Lipowski','Lubomir' pomocou prikazu
+SQL> DELETE FROM zamestnanci WHERE .....
+
+3/ skusit nastavit 'Liba','Daniel' plat o 200 eur vyzsi
+SQL> UPDATE zamestnanci SET salary .... where ....
+
+4/ urobit zalohu tabulky zamestnnanci aj oddelenia pomocou prikazu:
+SQL> create table zamestnanci_bck as select * from zamestnanci;   (obdobne pre oddelenia)
+
+5/ vytvorit novy tablespace a pokusit sa remap TBS
+SQL> create tablespace NEW_TBS datafile '/u01/data/TMYDB/new_tbs_01.dbf' size 5G;
+impdp \"/ as sysdba\" dumpfile=expdp_SCH_STUDENT15_24052023.dmp directory=DPDIR schemas=STUDENT15 log=expdp.log REMAP_SCHEMA=STUDENT15:IKDB REMAP_TABLESPACE=USERS:NEW_TBS
+
+
+
+
+## RMAN
+-------------------------------------------------
+rman target /
+
+RMAN> show all;
+
+using target database control file instead of recovery catalog
+RMAN configuration parameters for database with db_unique_name TSKDB are:
+CONFIGURE RETENTION POLICY TO REDUNDANCY 1; # default
+CONFIGURE BACKUP OPTIMIZATION OFF; # default
+CONFIGURE DEFAULT DEVICE TYPE TO DISK; # default
+CONFIGURE CONTROLFILE AUTOBACKUP ON; # default
+CONFIGURE CONTROLFILE AUTOBACKUP FORMAT FOR DEVICE TYPE DISK TO '%F'; # default
+CONFIGURE DEVICE TYPE DISK PARALLELISM 1 BACKUP TYPE TO BACKUPSET; # default
+CONFIGURE DATAFILE BACKUP COPIES FOR DEVICE TYPE DISK TO 1; # default
+CONFIGURE ARCHIVELOG BACKUP COPIES FOR DEVICE TYPE DISK TO 1; # default
+CONFIGURE MAXSETSIZE TO UNLIMITED; # default
+CONFIGURE ENCRYPTION FOR DATABASE OFF; # default
+CONFIGURE ENCRYPTION ALGORITHM 'AES128'; # default
+CONFIGURE COMPRESSION ALGORITHM 'BASIC' AS OF RELEASE 'DEFAULT' OPTIMIZE FOR LOAD TRUE ; # default
+CONFIGURE RMAN OUTPUT TO KEEP FOR 7 DAYS; # default
+CONFIGURE ARCHIVELOG DELETION POLICY TO NONE; # default
+CONFIGURE SNAPSHOT CONTROLFILE NAME TO '/u01/app/oracle/product/19c/dbs/snapcf_tSKDB.f'; # default
+
+## NASTAVENIE BACKUP DESTINACIE:
+---------------------------------------
+SQL> alter system set db_recovery_file_dest_size=10G;
+SQL> alter system set db_recovery_file_dest='/home/oracle/backup';
+
+SQL> show parameter recovery
+NAME                                 TYPE        VALUE
+------------------------------------ ----------- ------------------------------
+db_recovery_file_dest                string      /home/oracle/backup
+db_recovery_file_dest_size           big integer 10G
+recovery_parallelism                 integer     0
+remote_recovery_file_dest            string
+
+
+## BACKUP DATABAZY:
+---------------------------------------------------------
+rman target /
+
+RMAN> backup database;
+
+Starting backup at 26.05.2023 07:34:27
+using target database control file instead of recovery catalog
+allocated channel: ORA_DISK_1
+channel ORA_DISK_1: SID=506 device type=DISK
+channel ORA_DISK_1: starting full datafile backup set
+channel ORA_DISK_1: specifying datafile(s) in backup set
+input datafile file number=00002 name=/u01/data/tSKDB/skolenie02.dbf
+input datafile file number=00001 name=/u01/data/tSKDB/system01.dbf
+input datafile file number=00003 name=/u01/data/tSKDB/sysaux01.dbf
+input datafile file number=00005 name=/u01/data/tSKDB/skolenie01.dbf
+input datafile file number=00007 name=/u01/data/tSKDB/users01.dbf
+input datafile file number=00004 name=/u01/data/tSKDB/undotbs01.dbf
+input datafile file number=00008 name=/u01/data/tSKDB/APLIKACIA/apll_01.dbf
+channel ORA_DISK_1: starting piece 1 at 26.05.2023 07:34:28
+channel ORA_DISK_1: finished piece 1 at 26.05.2023 07:34:43
+piece handle=/home/oracle/backup/TSKDB/backupset/2023_05_26/o1_mf_nnndf_TAG20230526T073428_l70k74gl_.bkp tag=TAG20230526T073428 comment=NONE
+channel ORA_DISK_1: backup set complete, elapsed time: 00:00:15
+Finished backup at 26.05.2023 07:34:43
+
+Starting Control File and SPFILE Autobackup at 26.05.2023 07:34:43
+piece handle=/home/oracle/backup/TSKDB/autobackup/2023_05_26/o1_mf_s_1137828883_l70k7mq1_.bkp comment=NONE
+Finished Control File and SPFILE Autobackup at 26.05.2023 07:34:44
+
+## BACKUP ARCH LOGOV:
+---------------------------------------------------------
+SQL> archive log list;
+Database log mode              Archive Mode
+Automatic archival             Enabled
+Archive destination            /home/oracle/archive
+Oldest online log sequence     6
+Next log sequence to archive   8
+Current log sequence           8
+
+rman target /
+RMAN> backup archivelog all delete input;
+
+
+DEMO RESTORE DATAFILE:
+---------------------------------------
+oracle@centos8$ rm -rf /u01/data/tSKDB/users01.dbf
+oracle@centos8$ rm -rf /u01/data/tSKDB/skolenie02.dbf
+
+SQL@tSKDB> select count(*) from STUDENT15.T1;
+select count(*) from STUDENT15.T1
+                               *
+ERROR at line 1:
+ORA-01116: error in opening database file 7
+ORA-01110: data file 7: '/u01/data/tSKDB/users01.dbf'
+ORA-27041: unable to open file
+Linux-x86_64 Error: 2: No such file or directory
+Additional information: 3
+
+
+oracle@centos8$ rman target /
+
+Recovery Manager: Release 19.0.0.0.0 - Production on Fri May 26 07:42:41 2023
+Version 19.3.0.0.0
+
+Copyright (c) 1982, 2019, Oracle and/or its affiliates.  All rights reserved.
+
+connected to target database: TSKDB (DBID=1746570912)
+
+RMAN> list failure;
+
+using target database control file instead of recovery catalog
+Database Role: PRIMARY
+
+List of Database Failures
+=========================
+
+Failure ID Priority Status    Time Detected       Summary
+---------- -------- --------- ------------------- -------
+162        HIGH     OPEN      26.05.2023 07:42:06 One or more non-system datafiles are missing
+
+RMAN> advise failure;
+
+Database Role: PRIMARY
+
+List of Database Failures
+=========================
+
+Failure ID Priority Status    Time Detected       Summary
+---------- -------- --------- ------------------- -------
+162        HIGH     OPEN      26.05.2023 07:42:06 One or more non-system datafiles are missing
+
+analyzing automatic repair options; this may take some time
+allocated channel: ORA_DISK_1
+channel ORA_DISK_1: SID=506 device type=DISK
+analyzing automatic repair options complete
+
+Mandatory Manual Actions
+========================
+no manual actions available
+
+Optional Manual Actions
+=======================
+1. If file /u01/data/tSKDB/skolenie02.dbf was unintentionally renamed or moved, restore it
+2. If file /u01/data/tSKDB/users01.dbf was unintentionally renamed or moved, restore it
+
+Automated Repair Options
+========================
+Option Repair Description
+------ ------------------
+1      Restore and recover datafile 2; Restore and recover datafile 7
+  Strategy: The repair includes complete media recovery with no data loss
+  Repair script: /u01/app/oracle/diag/rdbms/tskdb/tSKDB/hm/reco_3386244624.hm
+
+RMAN> repair failure;
+
+Strategy: The repair includes complete media recovery with no data loss
+Repair script: /u01/app/oracle/diag/rdbms/tskdb/tSKDB/hm/reco_3386244624.hm
+
+contents of repair script:
+   # restore and recover datafile
+   sql 'alter database datafile 2, 7 offline';
+   restore ( datafile 2, 7 );
+   recover datafile 2, 7;
+   sql 'alter database datafile 2, 7 online';
+
+Do you really want to execute the above repair (enter YES or NO)? y
+executing repair script
+
+sql statement: alter database datafile 2, 7 offline
+
+Starting restore at 26.05.2023 07:43:19
+using channel ORA_DISK_1
+
+channel ORA_DISK_1: starting datafile backup set restore
+channel ORA_DISK_1: specifying datafile(s) to restore from backup set
+channel ORA_DISK_1: restoring datafile 00002 to /u01/data/tSKDB/skolenie02.dbf
+channel ORA_DISK_1: restoring datafile 00007 to /u01/data/tSKDB/users01.dbf
+channel ORA_DISK_1: reading from backup piece /home/oracle/backup/TSKDB/backupset/2023_05_26/o1_mf_nnndf_TAG20230526T073428_l70k74gl_.bkp
+channel ORA_DISK_1: piece handle=/home/oracle/backup/TSKDB/backupset/2023_05_26/o1_mf_nnndf_TAG20230526T073428_l70k74gl_.bkp tag=TAG20230526T073428
+channel ORA_DISK_1: restored backup piece 1
+channel ORA_DISK_1: restore complete, elapsed time: 00:00:07
+Finished restore at 26.05.2023 07:43:26
+
+Starting recover at 26.05.2023 07:43:26
+using channel ORA_DISK_1
+
+starting media recovery
+
+archived log for thread 1 with sequence 5 is already on disk as file /home/oracle/archive/1_5_1137769485.dbf
+archived log for thread 1 with sequence 6 is already on disk as file /home/oracle/archive/1_6_1137769485.dbf
+archived log for thread 1 with sequence 7 is already on disk as file /home/oracle/archive/1_7_1137769485.dbf
+archived log for thread 1 with sequence 8 is already on disk as file /home/oracle/archive/1_8_1137769485.dbf
+archived log for thread 1 with sequence 9 is already on disk as file /home/oracle/archive/1_9_1137769485.dbf
+archived log for thread 1 with sequence 10 is already on disk as file /home/oracle/archive/1_10_1137769485.dbf
+archived log for thread 1 with sequence 11 is already on disk as file /home/oracle/archive/1_11_1137769485.dbf
+archived log for thread 1 with sequence 12 is already on disk as file /home/oracle/archive/1_12_1137769485.dbf
+archived log file name=/home/oracle/archive/1_5_1137769485.dbf thread=1 sequence=5
+archived log file name=/home/oracle/archive/1_6_1137769485.dbf thread=1 sequence=6
+archived log file name=/home/oracle/archive/1_7_1137769485.dbf thread=1 sequence=7
+archived log file name=/home/oracle/archive/1_8_1137769485.dbf thread=1 sequence=8
+archived log file name=/home/oracle/archive/1_9_1137769485.dbf thread=1 sequence=9
+archived log file name=/home/oracle/archive/1_10_1137769485.dbf thread=1 sequence=10
+media recovery complete, elapsed time: 00:00:00
+Finished recover at 26.05.2023 07:43:27
+
+sql statement: alter database datafile 2, 7 online
+repair failure complete
+
+RMAN>
