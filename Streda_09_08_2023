@@ -1,0 +1,402 @@
+ULOHY
+1. V noci som prestavil port na Listenery na 1525
+   v tnsnames.ora si zmente port na 1525 a pripojte sa do databazi
+
+2. spustite script nachadzajuci sa v /tmp/import_zamestnanci.sql
+
+3. pomocou desc a count(*) zistite kolko stlpcov a riadkov ma tabulka ZAM
+
+4 Pomocu prikazu "create table ZAM_BCK as select * from ZAM;" urobte backup tabulky ZAM
+
+5 Zmazte lubovolny riadok z tab ZAM, nezabudnite tranzakciu korektne ukoncit
+
+6. v tabulke ZAM pomocou SELECTU zistite aky plat ma zamestnanec s priezviskom Horvath
+
+7. v tabulke ZAM si zvyste na 3000 eur
+
+8. Pravdivo si odpovedzte na otazku: paci sa mi toto skolenie ?
+   A odpoved zapiste do tabulky: LEKTOR01.ODPOVED
+
+
+
+
+INSTALACIA ORACLE DB SW A VYTVORENIE DB
+--------------------------------------------------------------------------------------------
+## as ROOT user
+groupadd oinstall
+groupadd dba
+useradd -g oinstall -G dba oracle
+passwd oracle
+
+## as ROOT user
+mv /etc/oraInst.loc /etc/oraInst.loc_bck
+
+
+## AS ORACLE user
+mkdir -p /u01/data/
+mkdir -p /u01/app/oracle/product/19c
+ls -la /tmp/LINUX.X64_193000_db_home.zip
+cp /tmp/LINUX.X64_193000_db_home.zip /u01/app/oracle/product/19c/
+cd /u01/app/oracle/product/19c/
+unzip LINUX.X64_193000_db_home.zip
+
+## AS ORACLE user
+export CV_ASSUME_DISTID=OEL7.8
+export OH_NEW=/u01/app/oracle/product/19c
+export ORA_INVENTORY=/u01/app/oraInventory
+export SW_DIRECTORY=/u01/app/oracle/product/19c
+export ORACLE_HOSTNAME=centos8
+export ORACLE_BASE=/u01/app/oracle/product
+cd $SW_DIRECTORY
+
+## AS ORACLE user
+./runInstaller -ignorePrereq -waitforcompletion -silent \
+    -responseFile ${SW_DIRECTORY}/install/response/db_install.rsp \
+    oracle.install.option=INSTALL_DB_SWONLY \
+    ORACLE_HOSTNAME=${ORACLE_HOSTNAME} \
+    UNIX_GROUP_NAME=oinstall \
+    INVENTORY_LOCATION=${ORA_INVENTORY} \
+    SELECTED_LANGUAGES=en,en_GB \
+    ORACLE_HOME=${OH_NEW} \
+    ORACLE_BASE=${ORACLE_BASE} \
+    oracle.install.db.InstallEdition=EE \
+    oracle.install.db.OSDBA_GROUP=dba \
+    oracle.install.db.OSBACKUPDBA_GROUP=dba \
+    oracle.install.db.OSDGDBA_GROUP=dba \
+    oracle.install.db.OSKMDBA_GROUP=dba \
+    oracle.install.db.OSRACDBA_GROUP=dba \
+    SECURITY_UPDATES_VIA_MYORACLESUPPORT=false \
+    DECLINE_SECURITY_UPDATES=true
+
+## AS ORACLE user
+export ORACLE_SID=tmyDB
+cd /u01/app/oracle/product/19c/bin
+./dbca -silent -createDatabase                            \
+     -templateName General_Purpose.dbc                  \
+     -gdbname ${ORACLE_SID} -sid  ${ORACLE_SID}         \
+     -characterSet AL32UTF8                             \
+     -sysPassword start123                            \
+     -systemPassword start123                          \
+     -createAsContainerDatabase false                   \
+     -totalMemory 3000                                  \
+     -storageType FS                                    \
+     -datafileDestination /u01/data/  \
+     -emConfiguration NONE                              \
+     -ignorePreReqs -sampleSchema true
+     
+## AS ORACLE user 
+export ORACLE_BASE=/u01/app/oracle/product
+export ORACLE_HOME=/u01/app/oracle/product/19c
+export ORACLE_SID=tmyDB    
+export PATH=$PATH:/u01/app/oracle/product/19c/bin
+sqlplus / as sysdba
+
+-------------------------------------------------------------------------------------------------------------------------
+MATERIALIZED VIEW:
+
+create table t1
+as
+select rownum id, a.*
+  from all_objects a
+ where 1=0;
+
+15x
+insert 
+    into t1
+    select rownum, a.*
+      from all_objects a;
+commit;
+
+
+create table t2
+as
+select * from t1;
+
+col SEGMENT_NAME for a10
+select segment_name,sum(bytes)/1024/1024 MB from dba_segments where segment_type='TABLE' 
+and segment_name in ('T1','T2') group by segment_name;
+
+SEGMENT_NA         MB
+---------- ----------
+T1                178
+T2                175
+
+exec dbms_stats.gather_table_stats(ownname=>'STUDENT15',tabname=>'T1',cascade=>true,no_invalidate=>false,degree=>4);
+exec dbms_stats.gather_table_stats(ownname=>'STUDENT15',tabname=>'T2',cascade=>true,no_invalidate=>false,degree=>4);
+
+
+
+alter session set nls_date_format="yyyy-mm-dd hh24:mi:ss";
+
+set lines 200
+col OWNER for a20
+col OBJECT_NAME for a30
+select t1.ID,t1.OWNER,t1.CREATED,t1.LAST_DDL_TIME
+from t1,t2 where t1.id=t2.id and t1.ID=62766 order by 1;
+
+CREATE  VIEW JCUJ_VIEW as 
+select t1.ID,t1.OWNER,t1.CREATED,t1.LAST_DDL_TIME
+from t1,t2 where t1.id=t2.id and t1.ID=62766 order by 1;
+
+
+CREATE MATERIALIZED VIEW TM_VIEW
+  BUILD IMMEDIATE
+  REFRESH FORCE ON DEMAND
+  ENABLE QUERY REWRITE
+  AS
+select t1.ID,t1.OWNER,t1.CREATED,t1.LAST_DDL_TIME
+from t1,t2 where t1.id=t2.id and t1.ID=62766 order by 1;
+
+
+SQL> col SEGMENT_NAME for a10
+select segment_name,sum(bytes)/1024/1024 MB from dba_segments where
+segment_name in ('T1','T2','TM_VIEW','JCUJ_VIEW') group by segment_name;
+
+SEGMENT_NA         MB
+---------- ----------
+T1                178
+T2                175
+TM_VIEW         .0625
+
+
+
+select * from JCUJ_VIEW;
+
+select * from TM_VIEW;
+
+update  t1 set OWNER='JOZO' where t1.ID=62766;
+update  t2 set OWNER='JOZO' where t2.ID=62766;
+
+select * from JCUJ_VIEW;
+
+select * from TM_VIEW;
+
+BEGIN
+DBMS_MVIEW.REFRESH('TM_VIEW');
+END;
+/
+
+select * from TM_VIEW;
+
+BEGIN
+DBMS_MVIEW.REFRESH('T1');
+END;
+/
+
+DROP MATERIALIZED VIEW TM_VIEW;
+DROP VIEW JCUJ_VIEW;
+DROP TABLE T1;
+DROP TABLE T2;
+
+
+velkost tabulky
+------------------------------------------
+col SEGMENT_NAME for a10
+select segment_name,sum(bytes)/1024/1024 MB from dba_segments where segment_type='TABLE' 
+and segment_name=upper('&TABLE_NAME') group by segment_name;
+
+TABLESPACE vs DATAFILE
+--------------------------------------------
+set lines 200
+col FILE_NAME for a40
+select FILE_NAME,TABLESPACE_NAME,BYTES/1024/1024 MB from dba_data_files;
+
+vsetky tabulky v DB
+---------------------------------------------
+set lines 200
+col OWNER for a30
+col TABLE_NAME for a30
+select OWNER,TABLE_NAME,TABLESPACE_NAME,NUM_ROWS from dba_tables;
+
+set lines 200
+col OWNER for a30
+col TABLE_NAME for a30
+select OWNER,TABLE_NAME,TABLESPACE_NAME,NUM_ROWS from dba_tables where owner like 'STUDENT%';
+
+
+vsetky tabulky v mojej scheme
+---------------------------------------------
+set lines 200
+col OWNER for a30
+col TABLE_NAME for a30
+select TABLE_NAME,TABLESPACE_NAME,NUM_ROWS from user_tables;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------
+                  EXPDB / IMPDP
+--------------------------------------------------------
+EXPDP - slúži na export dát pomocou datapump utility
+IMPDP - slúži na import dát pomocou datapump utility
+
+Prereq
+User musí byť unlocked a mať grant create session
+	alter user app_user account unlock;
+Musí byť špecifikovaná cesta pre dump files
+	create or replace directory app_exp_dir as '/app/exp/dir/';
+User musí mať nagrantované práva na čítanie a zápis do directory
+	grant read,write on directory app_exp_dir to app_user;
+V neposlednom rade dostatok miesta na filesysteme.
+Pomocné pohľady;
+	dba_datapump_dir
+	dba_datapump_jobs/user_datapump_jobs
+
+Pre export objectov z cudzej schémy je potrebné mať nagrantovanú rolu EXP_FULL_DATABASE a pre import IMP_FULL_DATABASE
+
+Datapump export mode for non-DBA:
+	full export
+	schema export
+	table export
+	tablespace export
+	transportable tablespace export
+Pri exporte môžeme robiť exclude, include na db objekty, vieme exportnúť iba metadata,data alebo všetko
+
+
+
+SETUP
+Vytvorenie fyzickej cesty k dump súborom:
+mkdir /u01/data/export
+create or replace directory DPDIR as '/u01/data/export';
+grant read, write on directory DPDIR to student1;
+
+EXPDP
+$ expdp student01/start123@DB_tSKDB schemas=student01 directory=DPDIR
+$ ls -ltr /apps/admin/export
+-rw-r-----    1 oracle   dba          290816 Jul 18 14:03 export.dmp
+-rw-r--r--    1 oracle   dba            1530 Jul 18 14:03 export.log
+
+PRÍKLADY:
+$ expdp student1/start123@DB_tSKDB dumpfile=expdp_db.30072019.dmp LOGFILE=expdp_db.log directory=DPDIR schemas=student05
+
+$ expdp student1/start123@DB_tSKDB dumpfile=expdp_db.30072019.dmp LOGFILE=expdp_db.log directory=DPDIR tables=mojatabulka
+
+Možné ORA chyby v logoch pri exporte
+ORA-01555: snapshot too old: rollback segment number 20 with name "_SYSSMU20_4037596720$" too small
+ORA-01031: insufficient privileges
+ORA-01466: unable to read data - table definition has changed
+
+
+IMPDP
+$ impdp student1/start123@DB_tSKDB schemas=student1 directory=DPDIR dumpfile= export.dmp
+$ impdp student1/start123@DB_tSKDB dumpfile=expdp_db.30072019.dmp LOGFILE=impdp_db.log directory=DPDIR tables=mojatabulka
+
+
+EXPDP/IMPDP použitím par file
+--------------------------------------------
+file: mojexport.par
+USERID=student01/start123
+DIRECTORY=DPDIR
+DUMPFILE=expdp_db.30072019.dmp
+LOGFILE=expdp_db.30072019.log
+SCHEMAS=student1
+# or TABLES=EMPLOYEES, DEPARTMENTS
+
+$ expdp parfile=mojexport.par
+
+
+table_exists_action je použitá pri impdp keď tabuľka už existuje v DB 
+                 
+table_exists_action=skip:  ignoruj data v import file a nechaj existujúcu tabuľku nedotknutú. Toto je default option a neplatí pri nastavení  content=data_only.
+
+table_exists_action=append:  týmto sa povie, pridaj exportované dá do existujúcej tabuľky, nechaj exist. riadny a pridaj nové.
+
+table_exists_action=truncate:  toto nám vraví, truncate existujúcu tabuľku, ponechaj štruktúru a importni riadky z dump file. Pri použití tejto option nesmie existovat  referenčné integrita (constraints) na cieľovej tabuľke.  
+ 
+table_exists_action=replace:  toto nám vraví, zmaž celú tabuľku a nahraď definíciu a riadky tabuľky 
+
+DALSIE MOZNOSTI IMPDP
+TABLE_EXISTS_ACTION = {SKIP | APPEND | TRUNCATE | REPLACE}
+INCLUDE=
+EXCLUDE=TABLES:
+REMAP_SCHEMA=HR:HR2
+REMAP_TABLESPACE=EXAMPLE:HR2_DATA
+
+DEMO:
+-------------------------------------
+mkdir /u01/data/export
+SQL> create or replace directory DPDIR as '/u01/data/export';
+
+SQL> revoke dba from student15;
+SQL> grant read, write on directory DPDIR to student15;
+expdp student15/start123@DB_tSKDB dumpfile=expdp_SCH_STUDENT15_24052023.dmp LOGFILE=expdp_db.log directory=DPDIR schemas=student15
+
+AS SYSDBA
+expdp \'/ as sysdba\' dumpfile=expdp_SCH_STUDENT15_24052023.dmp directory=DPDIR schemas=STUDENT15 log=expdp.log
+
+# chmod 777 /u01/data/export
+
+ULOHA: einstein-15
+AS ORACLE USER: tmyDB
+mkdir /u01/data/DUMP
+SQL> create or replace directory DPDIR as '/u01/data/DUMP';
+
+scp oracle@10.233.133.153:/u01/data/export/expdp_SCH_STUDENT15_24052023.dmp /u01/data/DUMP/
+impdp \'/ as sysdba\' dumpfile=expdp_SCH_STUDENT15_24052023.dmp directory=DPDIR schemas=STUDENT15 log=expdp.log
+
+SQL> create temporary tablespace SYS_TMP_1 tempfile '/u01/data/TMYDB/SYS_TMP_1_1.dbf' size 2G;
+SQL> select tablespace_name from dba_tablespaces;
+
+SQL> drop user STUDENT15;
+SQL> create role DEMO;
+SQL> create role DEMO2;
+impdp \'/ as sysdba\' dumpfile=expdp_SCH_STUDENT15_24052023.dmp directory=DPDIR schemas=STUDENT15 log=expdp.log
+
+SQL> GRANT CREATE MATERIALIZED VIEW TO STUDENT15;
+SQL> select * from dba_directories where DIRECTORY_NAME='DPDIR';
+expdp \"/ as sysdba\" dumpfile=expdp_STUDENT15.dmp directory=DPDIR schemas=STUDENT15 log=expdp.log
+
+impdp \"/ as sysdba\" dumpfile=expdp_SCH_STUDENT15_24052023.dmp directory=DPDIR schemas=STUDENT15 log=expdp.log REMAP_SCHEMA=STUDENT15:APPLIKACNA_SCH
+
+SQL>
+create user APPLIKACNA_SCH identified by "start123" default tablespace USERS temporary tablespace SYS_TMP_1 profile DEFAULT;
+grant DEMO to APPLIKACNA_SCH WITH ADMIN OPTION;
+grant DEMO2 to APPLIKACNA_SCH WITH ADMIN OPTION;
+grant EXP_FULL_DATABASE to APPLIKACNA_SCH;
+grant CREATE MATERIALIZED VIEW to APPLIKACNA_SCH;
+grant CREATE SESSION to APPLIKACNA_SCH;
+alter user APPLIKACNA_SCH quota 6442450944 on USERS;
+alter user APPLIKACNA_SCH default role DEMO,DEMO2,EXP_FULL_DATABASE;
+
+
+SQL> create tablespace NEW_TBS datafile '/u01/data/TMYDB/new_tbs_01.dbf' size 5G;
+impdp \"/ as sysdba\" dumpfile=expdp_SCH_STUDENT15_24052023.dmp directory=DPDIR schemas=STUDENT15 log=expdp.log REMAP_SCHEMA=STUDENT15:IKDB REMAP_TABLESPACE=USERS:NEW_TBS
+
+
+# HISTORY Z MOJEJ PUTTY:
+scp oracle@10.233.133.153:/u01/data/export/expdp_SCH_STUDENT15_24052023.dmp /u01/data/DUMP/
+impdp \'/ as sysdba\' dumpfile=expdp_SCH_STUDENT15_24052023.dmp directory=DPDIR schemas=STUDENT15 log=expdp.log
+impdp \'/ as sysdba\' dumpfile=expdp_SCH_STUDENT15_24052023.dmp directory=DPDIR schemas=STUDENT15 log=expdp.log
+impdp \'/ as sysdba\' dumpfile=expdp_SCH_STUDENT15_24052023.dmp directory=DPDIR schemas=STUDENT15 log=expdp.log
+expdp \"/ as sysdba\" dumpfile=expdp_STUDENT15.dmp directory=DPDIR schemas=STUDENT15 log=expdp.log
+impdp \"/ as sysdba\" dumpfile=expdp_SCH_STUDENT15.dmp directory=DPDIR schemas=STUDENT15 log=expdp.log REMAP_SCHEMA=STUDENT15:APPLIKACNA_SCH
+impdp \"/ as sysdba\" dumpfile=expdp_STUDENT15.dmp directory=DPDIR schemas=STUDENT15 log=expdp.log REMAP_SCHEMA=STUDENT15:APPLIKACNA_SCH
+expdp \"/ as sysdba\" dumpfile=expdp_STUDENT15.dmp directory=DPDIR schemas=STUDENT15 log=expdp.log
+impdp \"/ as sysdba\" dumpfile=expdp_SCH_STUDENT15_24052023.dmp directory=DPDIR schemas=STUDENT15 log=expdp.log REMAP_SCHEMA=STUDENT15:APPLIKACNA_SCH
+impdp \"/ as sysdba\" dumpfile=expdp_SCH_STUDENT15_24052023.dmp directory=DPDIR schemas=STUDENT15 log=expdp.log REMAP_SCHEMA=STUDENT15:APPLIKACNA_SCH
+impdp \"/ as sysdba\" dumpfile=expdp_SCH_STUDENT15_24052023.dmp directory=DPDIR schemas=STUDENT15 log=expdp.log
+impdp \"/ as sysdba\" dumpfile=expdp_SCH_STUDENT15_24052023.dmp directory=DPDIR schemas=STUDENT15 log=expdp.log table_exists_action=replace
+impdp \"/ as sysdba\" dumpfile=expdp_SCH_STUDENT15_24052023.dmp directory=DPDIR schemas=STUDENT15 log=expdp.log table_exists_action=replace
+impdp \"/ as sysdba\" dumpfile=expdp_SCH_STUDENT15_24052023.dmp directory=DPDIR schemas=STUDENT15 log=expdp.log
+impdp \"/ as sysdba\" dumpfile=expdp_SCH_STUDENT15_24052023.dmp directory=DPDIR tables=STUDENT15.t2 log=expdp.log table_exists_action=replace
+
+
+
+AWS: EXPDP
+https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/oracle-s3-integration.html
+
+Requirements for Importing data with Oracle Data Pump and an Amazon S3 bucket
+# https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/Oracle.Procedural.Importing.html
+# https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/Oracle.Procedural.Importing.DataPump.html
