@@ -152,7 +152,7 @@ create user APPADM identified by "start123" default tablespace USERS;
 grant connect to APPADM;
 grant create table to APPADM;
 ALTER USER APPADM QUOTA 1024M ON USERS;
-grant EXP_FULL_DATABASE, IMP_FULL_DATABASE;
+## grant EXP_FULL_DATABASE, IMP_FULL_DATABASE;
 
 alter database datafile '/u01/data/TMYDB/users01.dbf' resize 5G;
 
@@ -160,61 +160,21 @@ sqlplus APPADM
 @/tmp/sw/create_tab.sql
 
 
------------------------------------------------------------------------------------------------------------------------------------------------------------
-                  EXPDB / IMPDP
---------------------------------------------------------
-EXPDP - slúži na export dát pomocou datapump utility
-IMPDP - slúži na import dát pomocou datapump utility
-
-Prereq
-User musí byť unlocked a mať grant create session
-	alter user app_user account unlock;
-Musí byť špecifikovaná cesta pre dump files
-	create or replace directory app_exp_dir as '/app/exp/dir/';
-User musí mať nagrantované práva na čítanie a zápis do directory
-	grant read,write on directory app_exp_dir to app_user;
-V neposlednom rade dostatok miesta na filesysteme.
-Pomocné pohľady;
-	dba_datapump_dir
-	dba_datapump_jobs/user_datapump_jobs
-
-Pre export objectov z cudzej schémy je potrebné mať nagrantovanú rolu EXP_FULL_DATABASE a pre import IMP_FULL_DATABASE
-
-Datapump export mode for non-DBA:
-	full export
-	schema export
-	table export
-	tablespace export
-	transportable tablespace export
-Pri exporte môžeme robiť exclude, include na db objekty, vieme exportnúť iba metadata,data alebo všetko
-
-
-
 SETUP
 Vytvorenie fyzickej cesty k dump súborom:
 mkdir /u01/data/export
 create or replace directory DPDIR as '/u01/data/export';
-grant read, write on directory DPDIR to student1;
+grant read, write on directory DPDIR to APPADM;
 
 EXPDP
-$ expdp student01/start123@DB_tSKDB schemas=student01 directory=DPDIR
+$ expdp APPADM schemas=appadm directory=DPDIR dumpfile=expdp_appadm.dmp LOGFILE=expdp_appadm.log
 $ ls -ltr /apps/admin/export
--rw-r-----    1 oracle   dba          290816 Jul 18 14:03 export.dmp
--rw-r--r--    1 oracle   dba            1530 Jul 18 14:03 export.log
+
 
 PRÍKLADY:
 $ expdp student1/start123@DB_tSKDB dumpfile=expdp_db.30072019.dmp LOGFILE=expdp_db.log directory=DPDIR schemas=student05
 
-$ expdp student1/start123@DB_tSKDB dumpfile=expdp_db.30072019.dmp LOGFILE=expdp_db.log directory=DPDIR tables=mojatabulka
-
-Možné ORA chyby v logoch pri exporte
-ORA-01555: snapshot too old: rollback segment number 20 with name "_SYSSMU20_4037596720$" too small
-ORA-01031: insufficient privileges
-ORA-01466: unable to read data - table definition has changed
-
-
 IMPDP
-$ impdp student1/start123@DB_tSKDB schemas=student1 directory=DPDIR dumpfile= export.dmp
 $ impdp student1/start123@DB_tSKDB dumpfile=expdp_db.30072019.dmp LOGFILE=impdp_db.log directory=DPDIR tables=mojatabulka
 
 
