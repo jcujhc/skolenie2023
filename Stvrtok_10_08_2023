@@ -1,3 +1,13 @@
+
+
+expdp \'/ as sysdba\' dumpfile=full.dmp directory=DPDIR log=ful_expdp.log full=y
+
+scp gaussteacher@10.233.133.28:/tmp/full.dmp /u01/data/export/
+
+
+impdp \'/ as sysdba\' dumpfile=full.dmp directory=DPDIR log=impdp_ful_expdp.log schemas=STUDENT03,STUDENT07
+
+
 ## PRACA Z DATAMI
 -------------------------------------------------------------------------------------
 sqlplus STUDENT15           (nie: sqlplus / as sysdba)
