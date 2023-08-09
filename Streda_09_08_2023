@@ -148,6 +148,11 @@ select TABLE_NAME,TABLESPACE_NAME,NUM_ROWS from user_tables;
 
 
 ------------------------------------------------------------------------------------------------------------------------
+create user APPADM identified by "start123";
+grant connect to APPADM;
+grant create table to APPADM;
+ALTER USER APPADM QUOTA 1024M ON USERS;
+grant EXP_FULL_DATABASE, IMP_FULL_DATABASE;
 
 
 
