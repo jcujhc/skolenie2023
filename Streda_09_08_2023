@@ -156,7 +156,8 @@ grant EXP_FULL_DATABASE, IMP_FULL_DATABASE;
 
 alter database datafile '/u01/data/TMYDB/users01.dbf' resize 5G;
 
-
+sqlplus APPADM
+@/tmp/sw/create_tab.sql
 
 
 -----------------------------------------------------------------------------------------------------------------------------------------------------------
