@@ -6,9 +6,9 @@ ULOHY
 
 3. pomocou desc a count(*) zistite kolko stlpcov a riadkov ma tabulka ZAM
 
-4 Pomocu prikazu "create table ZAM_BCK as select * from ZAM;" urobte backup tabulky ZAM
+4. Pomocu prikazu "create table ZAM_BCK as select * from ZAM;" urobte backup tabulky ZAM
 
-5 Zmazte lubovolny riadok z tab ZAM, nezabudnite tranzakciu korektne ukoncit
+5. Zmazte lubovolny riadok z tab ZAM, nezabudnite tranzakciu korektne ukoncit
 
 6. v tabulke ZAM pomocou SELECTU zistite aky plat ma zamestnanec s priezviskom Horvath
 
@@ -16,6 +16,22 @@ ULOHY
 
 8. Pravdivo si odpovedzte na otazku: paci sa mi toto skolenie ?
    A odpoved zapiste do tabulky: LEKTOR01.ODPOVED
+
+
+POMOCKY:
+----------
+1. echo $ORACLE_HOME
+2. @
+3. select count(*)
+4. 
+5. delete from ZAM where
+6. desc ZAM
+7. update ZAM set salary= 
+8. INSERT INTO .... VALUES ();
+
+
+
+
 
 
 
