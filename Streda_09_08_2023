@@ -23,12 +23,12 @@ https://www.w3schools.com/sql/sql_syntax.asp
 ----------
 1. echo $ORACLE_HOME
 2. @
-3. select count(*)
+3. select count(*) from
 4. 
 5. delete from ZAM 
 6. desc ZAM
 7. update ZAM set  
-8. INSERT INTO 
+8. INSERT INTO LEKTOR01.ODPOVED
 
 
 
