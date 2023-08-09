@@ -19,15 +19,16 @@ ULOHY
 
 
 POMOCKY:
+https://www.w3schools.com/sql/sql_syntax.asp
 ----------
 1. echo $ORACLE_HOME
 2. @
 3. select count(*)
 4. 
-5. delete from ZAM where
+5. delete from ZAM 
 6. desc ZAM
-7. update ZAM set salary= 
-8. INSERT INTO .... VALUES ();
+7. update ZAM set  
+8. INSERT INTO 
 
 
 
