@@ -1,10 +1,38 @@
-as ROOT user
+ULOHY
+1. V noci som prestavil port na Listenery na 1525
+   v tnsnames.ora si zmente port na 1525 a pripojte sa do databazi
+
+2. spustite script nachadzajuci sa v /tmp/import_zamestnanci.sql
+
+3. pomocou desc a count(*) zistite kolko stlpcov a riadkov ma tabulka ZAM
+
+4 Pomocu prikazu "create table ZAM_BCK as select * from ZAM;" urobte backup tabulky ZAM
+
+5 Zmazte lubovolny riadok z tab ZAM, nezabudnite tranzakciu korektne ukoncit
+
+6. v tabulke ZAM pomocou SELECTU zistite aky plat ma zamestnanec s priezviskom Horvath
+
+7. v tabulke ZAM si zvyste na 3000 eur
+
+8. Pravdivo si odpovedzte na otazku: paci sa mi toto skolenie ?
+   A odpoved zapiste do tabulky: LEKTOR01.ODPOVED
+
+
+
+
+INSTALACIA ORACLE DB SW A VYTVORENIE DB
+--------------------------------------------------------------------------------------------
+## as ROOT user
 groupadd oinstall
 groupadd dba
 useradd -g oinstall -G dba oracle
 passwd oracle
 
-AS ORACLE user
+## as ROOT user
+mv /etc/oraInst.loc /etc/oraInst.loc_bck
+
+
+## AS ORACLE user
 mkdir -p /u01/data/
 mkdir -p /u01/app/oracle/product/19c
 ls -la /tmp/LINUX.X64_193000_db_home.zip
@@ -12,10 +40,7 @@ cp /tmp/LINUX.X64_193000_db_home.zip /u01/app/oracle/product/19c/
 cd /u01/app/oracle/product/19c/
 unzip LINUX.X64_193000_db_home.zip
 
-as ROOT user
-[root@centos8 ~]# mv /etc/oraInst.loc /etc/oraInst.loc_bck
-
-AS ORACLE user
+## AS ORACLE user
 export CV_ASSUME_DISTID=OEL7.8
 export OH_NEW=/u01/app/oracle/product/19c
 export ORA_INVENTORY=/u01/app/oraInventory
@@ -24,7 +49,7 @@ export ORACLE_HOSTNAME=centos8
 export ORACLE_BASE=/u01/app/oracle/product
 cd $SW_DIRECTORY
 
-AS ORACLE user
+## AS ORACLE user
 ./runInstaller -ignorePrereq -waitforcompletion -silent \
     -responseFile ${SW_DIRECTORY}/install/response/db_install.rsp \
     oracle.install.option=INSTALL_DB_SWONLY \
@@ -43,7 +68,7 @@ AS ORACLE user
     SECURITY_UPDATES_VIA_MYORACLESUPPORT=false \
     DECLINE_SECURITY_UPDATES=true
 
-AS ORACLE user
+## AS ORACLE user
 export ORACLE_SID=tmyDB
 cd /u01/app/oracle/product/19c/bin
 ./dbca -silent -createDatabase                            \
@@ -59,7 +84,7 @@ cd /u01/app/oracle/product/19c/bin
      -emConfiguration NONE                              \
      -ignorePreReqs -sampleSchema true
      
-AS ORACLE user 
+## AS ORACLE user 
 export ORACLE_BASE=/u01/app/oracle/product
 export ORACLE_HOME=/u01/app/oracle/product/19c
 export ORACLE_SID=tmyDB    
