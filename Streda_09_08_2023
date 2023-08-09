@@ -147,6 +147,10 @@ col TABLE_NAME for a30
 select TABLE_NAME,TABLESPACE_NAME,NUM_ROWS from user_tables;
 
 
+------------------------------------------------------------------------------------------------------------------------
+
+
+
 
 
 
