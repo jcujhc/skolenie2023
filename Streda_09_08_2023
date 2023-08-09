@@ -53,9 +53,9 @@ mv /etc/oraInst.loc /etc/oraInst.loc_bck
 ## AS ORACLE user
 mkdir -p /u01/data/
 mkdir -p /u01/app/oracle/product/19c
-ls -la /tmp/LINUX.X64_193000_db_home.zip
-cp /tmp/LINUX.X64_193000_db_home.zip /u01/app/oracle/product/19c/
-cd /u01/app/oracle/product/19c/
+ls -la /tmp/sw/LINUX.X64_193000_db_home.zip
+cp /tmp/sw/LINUX.X64_193000_db_home.zip /u01/app/oracle/product/19c/
+cd /u01/app/oracle/product/19c
 unzip LINUX.X64_193000_db_home.zip
 
 ## AS ORACLE user
