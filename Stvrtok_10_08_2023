@@ -1,24 +1,26 @@
-
-
+EXPORT NA SOURCE:
 expdp \'/ as sysdba\' dumpfile=full.dmp directory=DPDIR log=ful_expdp.log full=y
-
+COPY NA DESTINATION:
 scp gaussteacher@10.233.133.28:/tmp/full.dmp /u01/data/export/
-
-
+IMPORT TO DESTINATION:
 impdp \'/ as sysdba\' dumpfile=full.dmp directory=DPDIR log=impdp_ful_expdp.log schemas=STUDENT03,STUDENT07
 
-
-## PRACA Z DATAMI
 -------------------------------------------------------------------------------------
-sqlplus STUDENT15           (nie: sqlplus / as sysdba)
-SQL>
-CREATE TABLE oddelenia
+ULOHY:
+Desc:
+1. 
+impdp \'/ as sysdba\' dumpfile=full.dmp directory=DPDIR log=impdp_ful_expdp.log schemas=STUDENT03,STUDENT07
+
+2.
+sqlplus APPADM     (nie: sqlplus / as sysdba)
+
+CREATE TABLE t1_odd
 ( dept_id number NOT NULL,
   dept_name varchar2(50) NOT NULL,
   dept_headof varchar2(50) NOT NULL
 );
 
-CREATE TABLE zamestnanci
+CREATE TABLE t2_zam
 ( emp_number number NOT NULL,
   last_name varchar2(50) NOT NULL,
   first_name varchar2(50) NOT NULL,
@@ -26,31 +28,30 @@ CREATE TABLE zamestnanci
   dept_id number
 );
 
-
-INSERT INTO oddelenia (dept_id, dept_name, dept_headof) VALUES (114567,'GSO SAP 5','Verner, Igor');
-INSERT INTO oddelenia (dept_id, dept_name, dept_headof) VALUES (221267,'TSO AM 4','Lycka-Kubalakova, Edita');
-INSERT INTO oddelenia (dept_id, dept_name, dept_headof) VALUES (327659,'LIM','Kasper, Kornelis');
-INSERT INTO oddelenia (dept_id, dept_name, dept_headof) VALUES (309217,'EMEA GBO and LIM','Tokarova, Andrea');
-INSERT INTO oddelenia (dept_id, dept_name, dept_headof) VALUES (280905,'Citrix1','Zelikova, Jana');
-INSERT INTO oddelenia (dept_id, dept_name, dept_headof) VALUES (328245,'CU Shell','Fric Jozef');
-INSERT INTO oddelenia (dept_id, dept_name, dept_headof) VALUES (222824,'PC and Platform Services','Holan Peter');
-INSERT INTO oddelenia (dept_id, dept_name, dept_headof) VALUES (311579,'DCO Systems Operations','Liba Dusan');
+INSERT INTO t1_odd (dept_id, dept_name, dept_headof) VALUES (114567,'GSO SAP 5','Verner, Igor');
+INSERT INTO t1_odd (dept_id, dept_name, dept_headof) VALUES (221267,'TSO AM 4','Lycka-Kubalakova, Edita');
+INSERT INTO t1_odd (dept_id, dept_name, dept_headof) VALUES (327659,'LIM','Kasper, Kornelis');
+INSERT INTO t1_odd (dept_id, dept_name, dept_headof) VALUES (309217,'EMEA GBO and LIM','Tokarova, Andrea');
+INSERT INTO t1_odd (dept_id, dept_name, dept_headof) VALUES (280905,'Citrix1','Zelikova, Jana');
+INSERT INTO t1_odd (dept_id, dept_name, dept_headof) VALUES (328245,'CU Shell','Fric Jozef');
+INSERT INTO t1_odd (dept_id, dept_name, dept_headof) VALUES (222824,'PC and Platform Services','Holan Peter');
+INSERT INTO t1_odd (dept_id, dept_name, dept_headof) VALUES (311579,'DCO Systems Operations','Liba Dusan');
 commit;
 
-INSERT INTO zamestnanci (emp_number, last_name, first_name, salary, dept_id) VALUES (460061, 'Molnar','Ivan', 700, 114567);
-INSERT INTO zamestnanci (emp_number, last_name, first_name, salary, dept_id) VALUES (329099, 'Molnar','Jozef', 820, 327659);
-INSERT INTO zamestnanci (emp_number, last_name, first_name, salary, dept_id) VALUES (534001, 'Beck','Samuel', 900, 309217);
-INSERT INTO zamestnanci (emp_number, last_name, first_name, salary, dept_id) VALUES (261942, 'Liba','Daniel', 650, 309217);
-INSERT INTO zamestnanci (emp_number, last_name, first_name, salary, dept_id) VALUES (209818, 'Vancakova','Ivana', 1200, 221267);
-INSERT INTO zamestnanci (emp_number, last_name, first_name, salary, dept_id) VALUES (292857, 'Szaboova', 'Slava',1500,328245);
-INSERT INTO zamestnanci (emp_number, last_name, first_name, salary, dept_id) VALUES (259133, 'Lipowski','Lubomir',1390,311579);
-INSERT INTO zamestnanci (emp_number, last_name, first_name, salary, dept_id) VALUES (234501, 'Reckert','Falk',1900,311579); 
-INSERT INTO zamestnanci (emp_number, last_name, first_name, salary, dept_id) VALUES (401932,'Bacova','Daniela',1370,280905); 
-INSERT INTO zamestnanci (emp_number, last_name, first_name, salary, dept_id) VALUES (401484,'Kollarova','Veronika',1250,309217); 
+INSERT INTO t2_zam (emp_number, last_name, first_name, salary, dept_id) VALUES (460061, 'Molnar','Ivan', 700, 114567);
+INSERT INTO t2_zam (emp_number, last_name, first_name, salary, dept_id) VALUES (329099, 'Molnar','Jozef', 820, 327659);
+INSERT INTO t2_zam (emp_number, last_name, first_name, salary, dept_id) VALUES (534001, 'Beck','Samuel', 900, 309217);
+INSERT INTO t2_zam (emp_number, last_name, first_name, salary, dept_id) VALUES (261942, 'Liba','Daniel', 650, 309217);
+INSERT INTO t2_zam (emp_number, last_name, first_name, salary, dept_id) VALUES (209818, 'Vancakova','Ivana', 1200, 221267);
+INSERT INTO t2_zam (emp_number, last_name, first_name, salary, dept_id) VALUES (292857, 'Szaboova', 'Slava',1500,328245);
+INSERT INTO t2_zam (emp_number, last_name, first_name, salary, dept_id) VALUES (259133, 'Lipowski','Lubomir',1390,311579);
+INSERT INTO t2_zam (emp_number, last_name, first_name, salary, dept_id) VALUES (234501, 'Reckert','Falk',1900,311579); 
+INSERT INTO t2_zam (emp_number, last_name, first_name, salary, dept_id) VALUES (401932,'Bacova','Daniela',1370,280905); 
+INSERT INTO t2_zam (emp_number, last_name, first_name, salary, dept_id) VALUES (401484,'Kollarova','Veronika',1250,309217); 
 commit;
 
-select * from zamestnanci;
-select * from oddelenia;
+select * from t2_zam;
+select * from t1_odd;
 
 1/ skusit vlozit seba do tabulky zamestnanci -> cize nejako upravit tento INSERT
 SQL> INSERT INTO zamestnanci (emp_number, last_name, first_name, salary, dept_id) VALUES (401932,'Bacova','Daniela',1370,280905);
@@ -58,15 +59,16 @@ SQL> INSERT INTO zamestnanci (emp_number, last_name, first_name, salary, dept_id
 2/ skusit vymazat zamestnanca 'Lipowski','Lubomir' pomocou prikazu
 SQL> DELETE FROM zamestnanci WHERE .....
 
-3/ skusit nastavit 'Liba','Daniel' plat o 200 eur vyzsi
-SQL> UPDATE zamestnanci SET salary .... where ....
-
-4/ urobit zalohu tabulky zamestnnanci aj oddelenia pomocou prikazu:
-SQL> create table zamestnanci_bck as select * from zamestnanci;   (obdobne pre oddelenia)
-
-5/ vytvorit novy tablespace a pokusit sa remap TBS
+3/ vytvorit novy tablespace a pokusit sa remap TBS
 SQL> create tablespace NEW_TBS datafile '/u01/data/TMYDB/new_tbs_01.dbf' size 5G;
-impdp \"/ as sysdba\" dumpfile=expdp_SCH_STUDENT15_24052023.dmp directory=DPDIR schemas=STUDENT15 log=expdp.log REMAP_SCHEMA=STUDENT15:IKDB REMAP_TABLESPACE=USERS:NEW_TBS
+impdp \"/ as sysdba\" dumpfile=expdp_SCH_STUDENT15_24052023.dmp directory=DPDIR schemas=STUDENT15 log=expdp.log REMAP_SCHEMA=APPADM:IKDB REMAP_TABLESPACE=USERS:NEW_TBS
+
+BONUS:
+
+
+
+
+
 
 
 
